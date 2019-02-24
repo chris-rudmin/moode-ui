@@ -10,7 +10,7 @@
     "test:watch": "jest --watch",
     "clean": "rimraf dist",
     "build": "webpack --mode production",
-    "start": "npm run clean && cross-env START_APP_SERVER=true webpack-dev-server --open --mode development",
+    "start": "cross-env START_APP_SERVER=true webpack-dev-server --open --mode development",
     "lint:check": "eslint --print-config .eslintrc.json | eslint-config-prettier-check",
     "lint:debug": "cross-env DEBUG=eslint:cli-engine eslint 'src/**/*.{js,jsx}'",
     "lint:fix": "cross-env eslint --fix 'src/**/*.{js,jsx}'",
@@ -80,6 +80,6 @@
     "webpack-api-mocker": "^1.6.6",
     "webpack-cli": "^3.2.1",
     "webpack-dev-middleware": "^3.5.1",
-    "webpack-dev-server": "^3.1.14",
+    "webpack-dev-server": "^3.1.14"
   }
 }

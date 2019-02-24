@@ -7,7 +7,7 @@ process.env.START_APP_SERVER = process.env.START_APP_SERVER === 'true' ? 'true' 
 
 module.exports = {
   entry: {
-    index: './src/example/index.js',
+    index: './src/index.js',
   },
   output: {
     path: path.join(__dirname, 'dist'),
