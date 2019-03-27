@@ -1,7 +1,7 @@
 const proxy = {
   'GET /test/': (req, res) => res
     .json({
-      test: true
+      test: true,
     }),
 };
 

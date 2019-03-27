@@ -1,15 +1,26 @@
-import React from 'react';
+import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
+import { LibraryProvider } from './context/LibraryContext';
 
+class Moode extends Component {
+  state = {
+    albums: []
+  }
 
-class App extends React.Component {
   render() {
     return (
-      <div data-test-id='app'>
-        Hello World
-      </div>
+      <LibraryProvider
+        value={{
+          state: this.state
+          actions: {
+            increment: () => this.setState({ count: this.state.count + 1 }),
+          }
+        }}
+      >
+        {this.props.children}
+      </LibraryProvider>
     );
   }
 }
 
-ReactDOM.render(<App />, document.getElementById('root'));
+ReactDOM.render(<Moode />, document.getElementById('root'));
