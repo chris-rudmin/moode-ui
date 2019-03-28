@@ -21,7 +21,7 @@ class AlbumView extends Component {
   render() {
     const albumThumbs = this.state.albums.map(album => {
       const albumKey = `${album.album}@${album.artist}`;
-      return <AlbumThumb album={album} key={albumKey}/>
+      return (<AlbumThumb album={album} key={albumKey}/>);
     });
 
     return (
