@@ -1,11 +1,12 @@
-import React from 'react';
+import React , {Component} from 'react';
 
-export class AlbumThumb extends React.Component {
+class AlbumThumb extends Component {
   render() {
     return (
-      <div data-test-id="app">
-        Hello World
+      <div>
       </div>
     );
   }
 }
+
+export default AlbumThumb;

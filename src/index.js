@@ -1,26 +1,35 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import { LibraryProvider } from './context/LibraryContext';
+import AlbumThumb from './components/AlbumThumb';
 
-class Moode extends Component {
-  state = {
-    albums: []
+class AlbumView extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      albums: [
+        {
+          album: 'test',
+          artist: 'testing'
+        }
+      ],
+      genres: [],
+      artists: [],
+      tracks: [],
+    };
   }
 
   render() {
+    const albumThumbs = this.state.albums.map(album => {
+      const albumKey = `${album.album}@${album.artist}`;
+      return <AlbumThumb album={album} key={albumKey}/>
+    });
+
     return (
-      <LibraryProvider
-        value={{
-          state: this.state
-          actions: {
-            increment: () => this.setState({ count: this.state.count + 1 }),
-          }
-        }}
-      >
-        {this.props.children}
-      </LibraryProvider>
+      <div>
+        {albumThumbs}
+      </div>
     );
   }
 }
 
-ReactDOM.render(<Moode />, document.getElementById('root'));
+ReactDOM.render(<AlbumView />, document.getElementById('root'));
