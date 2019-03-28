@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import AlbumThumb from './components/AlbumThumb';
+import oboe from 'oboe';
 
 class AlbumView extends Component {
   constructor(props) {
@@ -16,6 +17,22 @@ class AlbumView extends Component {
       artists: [],
       tracks: [],
     };
+  }
+
+  componentDidMount() {
+    oboe({
+       url: 'http://dev-moode.local/command/moode.php?cmd=loadlib',
+       method: 'POST',
+    }).node('!.*', track => {
+      this.setState((state, props) => {
+        return {
+          albums: [],
+          genres: [],
+          artists: [],
+          tracks: state.tracks.concat(track)
+        };
+      });
+    });
   }
 
   render() {

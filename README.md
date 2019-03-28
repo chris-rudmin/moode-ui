@@ -23,7 +23,7 @@ You can also start the application locally for development purposes using
 
 ### UI Component Test
 
-UI Component tests uses an internal Mock Server to serve API endpoint dependencies. The tests are run against our example page.
+UI Component tests uses an internal Mock Server to serve API endpoint dependencies.
 The Mock server will be start on the port 8080. 
 
     npm run test:e2e
