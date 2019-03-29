@@ -4,12 +4,11 @@ export const TrackShape = PropTypes.shape({
   album: PropTypes.string,
   album_artist: PropTypes.string,
   artist: PropTypes.string,
-  artist: PropTypes.string,
   composer: PropTypes.string,
   disc: PropTypes.string,
   file: PropTypes.string,
   genre: PropTypes.string,
-  last_modified: PropTypes.string,
+  last_modified: PropTypes.instanceOf(Date),
   time: PropTypes.string,
   time_mmss: PropTypes.string,
   title: PropTypes.string,
@@ -18,13 +17,14 @@ export const TrackShape = PropTypes.shape({
 });
 
 export const AlbumShape = PropTypes.shape({
-  title: PropTypes.string.isRequired,
+  title: PropTypes.string,
   artist: PropTypes.string,
   composer: PropTypes.string,
-  disc: PropTypes.string,
   genre: PropTypes.string,
-  last_modified: PropTypes.string,
+  last_modified: PropTypes.instanceOf(Date),
   year: PropTypes.string,
-  imgurl: PropTypes.string,
-  tracks: PropTypes.arrayOf(TrackShape)
+  thumb_url: PropTypes.string,
+  tracks: PropTypes.arrayOf(TrackShape),
 });
+
+export const MoodeDomain = 'http://dev-moode.local';
