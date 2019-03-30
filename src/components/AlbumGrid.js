@@ -84,7 +84,15 @@ class AlbumGrid extends Component {
       ));
 
     return (
-      <div className={classes.root}>
+      <AlbumGridWindow 
+        columnCount={1000}
+        columnWidth={100}
+        height={150}
+        rowCount={1000}
+        rowHeight={35}
+        width={300}
+        className={classes.root}
+      >
         <Grid
           container
           className={classes.root}
@@ -95,7 +103,7 @@ class AlbumGrid extends Component {
         >
           {albumCards}
         </Grid>
-      </div>
+      </AlbumGridWindow>
     );
   }
 }
