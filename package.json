@@ -45,8 +45,6 @@
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-router-dom": "^5.0.0",
-    "react-virtualized-auto-sizer": "^1.0.2",
-    "react-window": "^1.7.1",
     "styled-components": "^4.2.0"
   },
   "devDependencies": {

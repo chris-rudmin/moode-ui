@@ -2,27 +2,24 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import md5 from 'md5';
-import { FixedSizeGrid as FixedAlbumGrid } from 'react-window';
-import AutoSizer from 'react-virtualized-auto-sizer';
 import { MoodeDomain } from '../config/AppConstants';
 import AlbumCard from './AlbumCard';
-import styled from 'styled-components';
+import { withStyles } from '@material-ui/core/styles';
+import Grid from '@material-ui/core/Grid';
 
-
-const Container = styled.div`
-  display: flex;
-  flex: 0 0 200px;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  width: 100%;
-  height: 100%;
-`;
+const styles = () => ({
+  root: {
+    flexGrow: 1,
+  },
+  card: {
+  }
+});
 
 class AlbumGrid extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      albums: {},
+      albums: [],
       isLoading: false,
     };
   }
@@ -80,34 +77,33 @@ class AlbumGrid extends Component {
     });
   }
 
-  render() {
-    const albumLength = this.state.albums.length;
-    const items = ({ columnIndex, rowIndex, style}) => {
-      const index = columnIndex + (rowIndex * 8);
-      const album = this.state.albums[index];
-      if (album){
-        return <AlbumCard key={album.albumKey} album={album} style={style}/>
-      }
-      return <div key={index} style={style}></div>//
-    };
+ render() {
+    const { classes } = this.props;
+    const albumCards = this.state.albums.map(album => (
+      <Grid key={album.albumKey} item xs>
+        <AlbumCard className={classes.card} album={album} />
+      </Grid>
+    ));
 
     return (
-        <AutoSizer>
-          {({height, width}) => (
-            <FixedAlbumGrid 
-              columnCount={8}
-              columnWidth={208}
-              height={height}
-              rowCount={Math.ceil(albumLength/8)}
-              rowHeight={276}
-              width={width}
-            >
-              {items}
-            </FixedAlbumGrid>
-          )}
-        </AutoSizer>
+      <div className={classes.root}>
+        <Grid
+          container
+          className={classes.root}
+          spacing={8}
+          direction="row"
+          justify="space-around"
+          alignItems="flex-start"
+        >
+          {albumCards}
+        </Grid>
+      </div>
     );
   }
 }
 
-export default AlbumGrid;
+AlbumGrid.propTypes = {
+  classes: PropTypes.shape({}).isRequired,
+};
+
+ export default withStyles(styles)(AlbumGrid);
