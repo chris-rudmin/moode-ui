@@ -17,6 +17,8 @@ const styles = {
     height: 268,
     width: 200,
     marginBottom: 8,
+    marginRight: 8,
+    display: 'inline-block',
   },
 };
 

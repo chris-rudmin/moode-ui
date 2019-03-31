@@ -1,22 +1,22 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import oboe from 'oboe';
+import axios from 'axios';
 import md5 from 'md5';
-import { withStyles } from '@material-ui/core/styles';
-import Grid from '@material-ui/core/Grid';
-import { FixedSizeGrid as AlbumGridWindow } from 'react-window';
+import { FixedSizeGrid as FixedAlbumGrid } from 'react-window';
+import AutoSizer from 'react-virtualized-auto-sizer';
 import { MoodeDomain } from '../config/AppConstants';
 import AlbumCard from './AlbumCard';
+import styled from 'styled-components';
 
 
-const styles = () => ({
-  root: {
-    flexGrow: 1,
-  },
-  card: {
-  }
-});
-
+const Container = styled.div`
+  display: flex;
+  flex: 0 0 200px;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  width: 100%;
+  height: 100%;
+`;
 
 class AlbumGrid extends Component {
   constructor(props) {
@@ -28,89 +28,86 @@ class AlbumGrid extends Component {
   }
 
   componentDidMount() {
-    oboe({
-      url: `${MoodeDomain}/command/moode.php?cmd=loadlib`,
-      method: 'POST',
-    }).node('!.*', track => this.setState((state) => {
-      const newAlbums = { ...state.albums };
-      const artist = track.album_artist || track.artist;
-      const albumKey = `${track.album}@${artist}`;
-      const hash = encodeURIComponent(md5(track.file.substring(0, track.file.lastIndexOf('/'))));
+    this.setState({
+      ...this.state,
+      isLoading: true,
+    });
 
-      newAlbums[albumKey] = newAlbums[albumKey] || {
-        albumKey,
-        title: track.album,
-        artist,
-        tracks: [],
-        thumb_url: `${MoodeDomain}/imagesw/thmcache/${hash}.jpg`,
+    axios.post(`${MoodeDomain}/command/moode.php?cmd=loadlib`).then(({data}) => {
+      console.log(data);
+
+      var groupByArtist = function(acc, track) {
+        var artist = track.album_artist || track.artist;
+        (acc[artist] = acc[artist] || []).push(track);
+        return acc;
       };
 
-      const thisAlbum = newAlbums[albumKey];
-      track.last_modified = new Date(track.last_modified);
-      thisAlbum.tracks.push(track);
-      thisAlbum.genre = thisAlbum.genre || track.genre;
-      thisAlbum.year = thisAlbum.year || track.year;
-
-      const lastModified = Math.max.apply(null, thisAlbum.tracks.map(albumTrack => albumTrack.last_modified));
-      thisAlbum.last_modified = new Date(lastModified);
-
-      return {
-        ...state,
-        albums: newAlbums,
-        isLoading: true,
+      var groupByAlbum = function(acc, track) {
+        (acc[track.album] = acc[track.album] || []).push(track);
+        return acc;
       };
-    })).done((tracks) => {
+
+      var allArtistAlbums = Object.values(data.reduce(groupByArtist, {})).reduce((acc, artistTracks) => {
+        var artistAlbums = artistTracks.reduce(groupByAlbum, {});
+        return acc.concat(Object.values(artistAlbums));
+      }, []);
+
+      const allAlbums = allArtistAlbums.map(function(albumTracks){
+        const title = albumTracks.find(track => track.album).album;
+        const album_artist = albumTracks.find(track => track.album_artist);
+        const artist = (album_artist && album_artist.album_artist) || albumTracks.find(track => track.artist).artist;
+        const allLastModified = albumTracks.map(track => new Date(track.last_modified));
+        const last_modified = new Date(Math.max.apply(null, allLastModified));
+
+        const file = albumTracks.find(track => track.file).file;
+        const hash = encodeURIComponent(md5(file.substring(0, file.lastIndexOf('/'))));
+
+        return {
+          album_key: `${title}@${artist}`,
+          tracks: albumTracks,
+          artist,
+          last_modified,
+          title,
+          thumb_url: `${MoodeDomain}/imagesw/thmcache/${hash}.jpg`,
+        };
+      }).sort((a, b) => b.last_modified - a.last_modified);
+
       this.setState({
         ...this.state,
+        albums: allAlbums,
         isLoading: false,
       });
     });
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    return !nextState.isLoading
-      || Object.keys(nextState.albums).length !== Object.keys(this.state.albums).length && Object.keys(nextState.albums).length < 200;
-
-  }
-
   render() {
-    const { classes } = this.props;
-    const albumCards = Object.values(this.state.albums)
-      .sort((a, b) => b.last_modified - a.last_modified)
-      .map(album => (
-        <Grid key={album.albumKey} item xs>
-          <AlbumCard className={classes.card} album={album} />
-        </Grid>
-      ));
+    const albumLength = this.state.albums.length;
+    const items = ({ columnIndex, rowIndex, style}) => {
+      const index = columnIndex + (rowIndex * 8);
+      const album = this.state.albums[index];
+      if (album){
+        return <AlbumCard key={album.albumKey} album={album} style={style}/>
+      }
+      return <div key={index} style={style}></div>//
+    };
 
     return (
-      <AlbumGridWindow 
-        columnCount={1000}
-        columnWidth={100}
-        height={150}
-        rowCount={1000}
-        rowHeight={35}
-        width={300}
-        className={classes.root}
-      >
-        <Grid
-          container
-          className={classes.root}
-          spacing={8}
-          direction="row"
-          justify="space-around"
-          alignItems="flex-start"
-        >
-          {albumCards}
-        </Grid>
-      </AlbumGridWindow>
+        <AutoSizer>
+          {({height, width}) => (
+            <FixedAlbumGrid 
+              columnCount={8}
+              columnWidth={208}
+              height={height}
+              rowCount={Math.ceil(albumLength/8)}
+              rowHeight={276}
+              width={width}
+            >
+              {items}
+            </FixedAlbumGrid>
+          )}
+        </AutoSizer>
     );
   }
 }
 
-AlbumGrid.propTypes = {
-  classes: PropTypes.shape({}).isRequired,
-};
-
-
-export default withStyles(styles)(AlbumGrid);
+export default AlbumGrid;

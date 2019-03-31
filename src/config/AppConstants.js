@@ -8,7 +8,7 @@ export const TrackShape = PropTypes.shape({
   disc: PropTypes.string,
   file: PropTypes.string,
   genre: PropTypes.string,
-  last_modified: PropTypes.instanceOf(Date),
+  last_modified: PropTypes.string,
   time: PropTypes.string,
   time_mmss: PropTypes.string,
   title: PropTypes.string,
