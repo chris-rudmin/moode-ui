@@ -6,12 +6,23 @@ import { MoodeDomain } from '../config/AppConstants';
 import AlbumCard from './AlbumCard';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const styles = () => ({
   root: {
     flexGrow: 1,
+    paddingLeft: 8,
+    paddingRight: 8,
   },
-  card: {
+  loading: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: '100%',
+  },
+  progress: {
   }
 });
 
@@ -21,6 +32,7 @@ class AlbumGrid extends Component {
     this.state = {
       albums: [],
       isLoading: false,
+      progress: 0,
     };
   }
 
@@ -31,20 +43,19 @@ class AlbumGrid extends Component {
     });
 
     axios.post(`${MoodeDomain}/command/moode.php?cmd=loadlib`).then(({data}) => {
-      console.log(data);
 
-      var groupByArtist = function(acc, track) {
-        var artist = track.album_artist || track.artist;
+      const groupByArtist = (acc, track) => {
+        const artist = track.album_artist || track.artist;
         (acc[artist] = acc[artist] || []).push(track);
         return acc;
       };
 
-      var groupByAlbum = function(acc, track) {
+      const groupByAlbum = (acc, track) => {
         (acc[track.album] = acc[track.album] || []).push(track);
         return acc;
       };
 
-      var allArtistAlbums = Object.values(data.reduce(groupByArtist, {})).reduce((acc, artistTracks) => {
+      const allArtistAlbums = Object.values(data.reduce(groupByArtist, {})).reduce((acc, artistTracks) => {
         var artistAlbums = artistTracks.reduce(groupByAlbum, {});
         return acc.concat(Object.values(artistAlbums));
       }, []);
@@ -55,7 +66,6 @@ class AlbumGrid extends Component {
         const artist = (album_artist && album_artist.album_artist) || albumTracks.find(track => track.artist).artist;
         const allLastModified = albumTracks.map(track => new Date(track.last_modified));
         const last_modified = new Date(Math.max.apply(null, allLastModified));
-
         const file = albumTracks.find(track => track.file).file;
         const hash = encodeURIComponent(md5(file.substring(0, file.lastIndexOf('/'))));
 
@@ -85,20 +95,31 @@ class AlbumGrid extends Component {
       </Grid>
     ));
 
-    return (
-      <div className={classes.root}>
-        <Grid
-          container
-          className={classes.root}
-          spacing={8}
-          direction="row"
-          justify="space-around"
-          alignItems="flex-start"
-        >
-          {albumCards}
-        </Grid>
-      </div>
-    );
+    return this.state.isLoading ? (
+        <div className={classes.loading}>
+          <Typography variant="h5" gutterBottom={true}>
+            Loading Library
+          </Typography>
+          <CircularProgress
+            className={classes.progress}
+            variant="indeterminate"
+            size={80}
+          />
+        </div>
+      ) : (
+        <div className={classes.root}>
+          <Grid
+            container
+            className={classes.root}
+            spacing={8}
+            direction="row"
+            justify="space-around"
+            alignItems="flex-start"
+          >
+            {albumCards}
+          </Grid>
+        </div>
+      );
   }
 }
 

@@ -10,15 +10,14 @@ import { AlbumShape } from '../config/AppConstants';
 
 const styles = {
   media: {
-    height: 200,
-    width: 200,
-  },  
+    height: 165,
+  },
   card: {
-    height: 268,
-    width: 200,
+    flexGrow: 1,
+    width: 165,
     marginBottom: 8,
-    marginRight: 8,
-    display: 'inline-block',
+    marginLeft: 'auto',
+    marginRight: 'auto',
   },
 };
 
