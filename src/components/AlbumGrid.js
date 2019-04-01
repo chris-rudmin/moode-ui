@@ -87,7 +87,7 @@ class AlbumGrid extends Component {
     });
   }
 
- render() {
+  render() {
     const { classes } = this.props;
     const albumCards = this.state.albums.map(album => (
       <Grid key={album.albumKey} item xs>
@@ -107,7 +107,7 @@ class AlbumGrid extends Component {
           />
         </div>
       ) : (
-        <div className={classes.root}>
+        <div id='gridRoot' className={classes.root}>
           <Grid
             container
             className={classes.root}

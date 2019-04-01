@@ -13,37 +13,69 @@ const styles = {
     height: 165,
   },
   card: {
-    flexGrow: 1,
     width: 165,
     marginBottom: 8,
     marginLeft: 'auto',
     marginRight: 'auto',
   },
+  placeholder: {
+    width: 165,
+    height: 233,
+    marginBottom: 8,
+    backgroundColor: '#eeefee',
+  }
 };
 
 
 class AlbumCard extends PureComponent {
+  constructor(props) {
+    super(props);
+    this.state = {
+      hasLoaded: false,
+    };
+  }
+
+  componentDidMount() {
+    this.observer = new IntersectionObserver(entries => {
+      entries.forEach(({ isIntersecting }) => {
+        if (isIntersecting) {
+          this.setState({ hasLoaded: true });
+          this.observer = this.observer.disconnect();
+        }
+      });
+    }, {
+      rootMargin: "400%",
+    });
+
+    this.observer.observe(this.refs.placeHolder);
+  }
+
   render() {
     const { classes, album } = this.props;
-    return (
-      <Card className={classes.card}>
-        <CardActionArea>
-          <CardMedia
-            className={classes.media}
-            image={album.thumb_url}
-            title={album.title}
-          />
-          <CardContent>
-            <Typography variant="body1" noWrap={true}>
-              {album.title}
-              <Typography variant="caption" noWrap={true}>
-                {album.artist}
+
+    if (this.state.hasLoaded) {
+      return (
+        <Card className={classes.card}>
+          <CardActionArea>
+            <CardMedia
+              className={classes.media}
+              image={album.thumb_url}
+              title={album.title}
+            />
+            <CardContent>
+              <Typography variant="body1" noWrap={true}>
+                {album.title}
+                <Typography variant="caption" noWrap={true}>
+                  {album.artist}
+                </Typography>
               </Typography>
-            </Typography>
-          </CardContent>
-        </CardActionArea>
-      </Card>
-    );
+            </CardContent>
+          </CardActionArea>
+        </Card>
+      )
+    }
+
+    return <div className={classes.placeholder} ref='placeHolder'></div>
   }
 }
 
