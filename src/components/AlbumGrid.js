@@ -11,11 +11,9 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 
 const styles = () => ({
   root: {
-    flexGrow: 1,
-    paddingLeft: 8,
-    paddingRight: 8,
-    paddingTop: 12,
-    paddingBottom: 8,
+    // flexGrow: 1,
+    // flexWrap: 'wrap',
+    padding: 16,
   },
   loading: {
     display: 'flex',
@@ -24,7 +22,12 @@ const styles = () => ({
     justifyContent: 'center',
     height: '100%',
   },
-  progress: {
+  gridItem: {
+    minWidth: 175,
+    maxWidth: 210,
+    flexGrow: 1,
+    flexShrink: 1,
+    flexBasis: 0,
   }
 });
 
@@ -92,8 +95,8 @@ class AlbumGrid extends Component {
   render() {
     const { classes } = this.props;
     const albumCards = this.state.albums.map(album => (
-      <Grid key={album.albumKey} item xs>
-        <AlbumCard className={classes.card} album={album} />
+      <Grid key={album.albumKey} className={classes.gridItem} item>
+        <AlbumCard album={album} />
       </Grid>
     ));
 
@@ -103,19 +106,15 @@ class AlbumGrid extends Component {
             Loading Library
           </Typography>
           <CircularProgress
-            className={classes.progress}
             variant="indeterminate"
             size={80}
           />
         </div>
       ) : (
-        <div id='gridRoot' className={classes.root}>
-          <Grid
-            container
-            className={classes.root}
+        <div className={classes.root}>
+          <Grid container
             spacing={16}
             direction="row"
-            justify="space-around"
             alignItems="flex-start"
           >
             {albumCards}

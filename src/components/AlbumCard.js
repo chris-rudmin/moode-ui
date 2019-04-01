@@ -6,25 +6,17 @@ import CardActionArea from '@material-ui/core/CardActionArea';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
-import { AlbumShape } from '../config/AppConstants';
+import RootRef from '@material-ui/core/RootRef';
+import { AlbumShape, MoodeDomain } from '../config/AppConstants';
 
+const defaultImage = `${MoodeDomain}/images/default-cover-v6.svg`;
 const styles = {
   media: {
-    height: 165,
+    width: '100%',
+    paddingBottom: '100%',
   },
   card: {
-    width: 165,
-    marginBottom: 8,
-    marginLeft: 'auto',
-    marginRight: 'auto',
-  },
-  placeholder: {
-    width: 165,
-    height: 233,
-    marginBottom: 8,
-    backgroundColor: '#f2f5f2',
-    marginLeft: 'auto',
-    marginRight: 'auto',
+    flexGrow: 1,
   }
 };
 
@@ -32,6 +24,7 @@ const styles = {
 class AlbumCard extends PureComponent {
   constructor(props) {
     super(props);
+    this.domRef = React.createRef();
     this.state = {
       hasLoaded: false,
     };
@@ -46,38 +39,36 @@ class AlbumCard extends PureComponent {
         }
       });
     }, {
-      rootMargin: "300px 0px",
+      rootMargin: "500px 0px",
     });
 
-    this.observer.observe(this.refs.placeHolder);
+    this.observer.observe(this.domRef.current);
   }
 
   render() {
     const { classes, album } = this.props;
-
-    if (this.state.hasLoaded) {
-      return (
-        <Card className={classes.card}>
-          <CardActionArea>
+    return (
+      <Card className={classes.card}>
+        <CardActionArea>
+          <RootRef rootRef={this.domRef}>
             <CardMedia
+              ref='cardMedia'
               className={classes.media}
-              image={album.thumb_url}
+              image={this.state.hasLoaded ? album.thumb_url : defaultImage}
               title={album.title}
             />
-            <CardContent>
-              <Typography variant="body1" noWrap={true}>
-                {album.title}
-                <Typography variant="caption" noWrap={true}>
-                  {album.artist}
-                </Typography>
+          </RootRef>
+          <CardContent>
+            <Typography variant="body1" noWrap={true}>
+              {album.title}
+              <Typography variant="caption" noWrap={true}>
+                {album.artist}
               </Typography>
-            </CardContent>
-          </CardActionArea>
-        </Card>
-      )
-    }
-
-    return <div className={classes.placeholder} ref='placeHolder'></div>
+            </Typography>
+          </CardContent>
+        </CardActionArea>
+      </Card>
+    )
   }
 }
 
