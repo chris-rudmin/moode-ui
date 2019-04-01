@@ -62,7 +62,7 @@ class AlbumGrid extends Component {
         return acc.concat(Object.values(artistAlbums));
       }, []);
 
-      const allAlbums = allArtistAlbums.map(function(albumTracks){
+      const allAlbums = allArtistAlbums.map(albumTracks => {
         const title = albumTracks.find(track => track.album).album;
         const album_artist = albumTracks.find(track => track.album_artist);
         const artist = (album_artist && album_artist.album_artist) || albumTracks.find(track => track.artist).artist;
@@ -113,7 +113,7 @@ class AlbumGrid extends Component {
           <Grid
             container
             className={classes.root}
-            spacing={8}
+            spacing={16}
             direction="row"
             justify="space-around"
             alignItems="flex-start"
