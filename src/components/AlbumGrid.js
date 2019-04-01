@@ -14,6 +14,8 @@ const styles = () => ({
     flexGrow: 1,
     paddingLeft: 8,
     paddingRight: 8,
+    paddingTop: 12,
+    paddingBottom: 8,
   },
   loading: {
     display: 'flex',

@@ -22,7 +22,7 @@ const styles = {
     width: 165,
     height: 233,
     marginBottom: 8,
-    backgroundColor: '#eeefee',
+    backgroundColor: '#f2f5f2',
   }
 };
 
@@ -44,7 +44,7 @@ class AlbumCard extends PureComponent {
         }
       });
     }, {
-      rootMargin: "400%",
+      rootMargin: "250%",
     });
 
     this.observer.observe(this.refs.placeHolder);
