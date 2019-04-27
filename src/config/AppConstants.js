@@ -13,7 +13,7 @@ export const TrackShape = PropTypes.shape({
   time_mmss: PropTypes.string,
   title: PropTypes.string,
   tracknum: PropTypes.string,
-  year: PropTypes.string,
+  year: PropTypes.string
 });
 
 export const AlbumShape = PropTypes.shape({
@@ -24,7 +24,7 @@ export const AlbumShape = PropTypes.shape({
   last_modified: PropTypes.instanceOf(Date),
   year: PropTypes.string,
   thumb_url: PropTypes.string,
-  tracks: PropTypes.arrayOf(TrackShape),
+  tracks: PropTypes.arrayOf(TrackShape)
 });
 
 export const MoodeDomain = 'http://dev-moode.local';

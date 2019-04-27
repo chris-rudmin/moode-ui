@@ -14,6 +14,11 @@ You can also start the application locally for development purposes using
 
     npm run start
 
+## Connecting to a MoOde instance
+
+In the file `/var/www/command/moode.php` add the line
+
+    header("Access-Control-Allow-Origin: *");
 
 ## Tests
 

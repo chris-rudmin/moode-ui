@@ -13,34 +13,36 @@ const defaultImage = `${MoodeDomain}/images/default-cover-v6.svg`;
 const styles = {
   media: {
     width: '100%',
-    paddingBottom: '100%',
+    paddingBottom: '100%'
   },
   card: {
-    flexGrow: 1,
+    flexGrow: 1
   }
 };
-
 
 class AlbumCard extends PureComponent {
   constructor(props) {
     super(props);
     this.domRef = React.createRef();
     this.state = {
-      hasLoaded: false,
+      hasLoaded: false
     };
   }
 
   componentDidMount() {
-    this.observer = new IntersectionObserver(entries => {
-      entries.forEach(({ isIntersecting }) => {
-        if (isIntersecting) {
-          this.setState({ hasLoaded: true });
-          this.observer = this.observer.disconnect();
-        }
-      });
-    }, {
-      rootMargin: "500px 0px",
-    });
+    this.observer = new IntersectionObserver(
+      entries => {
+        entries.forEach(({ isIntersecting }) => {
+          if (isIntersecting) {
+            this.setState({ hasLoaded: true });
+            this.observer = this.observer.disconnect();
+          }
+        });
+      },
+      {
+        rootMargin: '500px 0px'
+      }
+    );
 
     this.observer.observe(this.domRef.current);
   }
@@ -52,29 +54,29 @@ class AlbumCard extends PureComponent {
         <CardActionArea>
           <RootRef rootRef={this.domRef}>
             <CardMedia
-              ref='cardMedia'
+              ref="cardMedia"
               className={classes.media}
               image={this.state.hasLoaded ? album.thumb_url : defaultImage}
               title={album.title}
             />
           </RootRef>
           <CardContent>
-            <Typography variant="body1" noWrap={true}>
+            <Typography variant="body1" noWrap>
               {album.title}
-              <Typography variant="caption" noWrap={true}>
+              <Typography variant="caption" noWrap>
                 {album.artist}
               </Typography>
             </Typography>
           </CardContent>
         </CardActionArea>
       </Card>
-    )
+    );
   }
 }
 
 AlbumCard.propTypes = {
   album: AlbumShape.isRequired,
-  classes: PropTypes.shape({}).isRequired,
+  classes: PropTypes.shape({}).isRequired
 };
 
 export default withStyles(styles)(AlbumCard);
