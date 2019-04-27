@@ -11,8 +11,6 @@
     "clean": "rimraf dist",
     "build": "webpack --mode production",
     "start": "cross-env START_APP_SERVER=true webpack-dev-server --open --mode development",
-    "lint:check": "eslint --print-config .eslintrc.json | eslint-config-prettier-check",
-    "lint:debug": "cross-env DEBUG=eslint:cli-engine eslint 'src/**/*.{js,jsx}'",
     "lint:fix": "npm run lint -- --fix",
     "lint": "cross-env eslint 'src/**/*.{js,jsx}'",
     "test:e2e": "jest -c jest-e2e.config.js --detectOpenHandles",
