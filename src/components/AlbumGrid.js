@@ -41,10 +41,10 @@ class AlbumGrid extends Component {
   }
 
   componentDidMount() {
-    this.setState({
-      ...this.state,
+    this.setState(prevState => ({
+      ...prevState,
       isLoading: true
-    });
+    }));
 
     axios
       .post(`${MoodeDomain}/command/moode.php?cmd=loadlib`)
@@ -70,14 +70,15 @@ class AlbumGrid extends Component {
         const allAlbums = allArtistAlbums
           .map(albumTracks => {
             const title = albumTracks.find(track => track.album).album;
-            const album_artist = albumTracks.find(track => track.album_artist);
+            const albumArtist = (
+              albumTracks.find(track => track.album_artist) || {}
+            ).album_artist;
             const artist =
-              (album_artist && album_artist.album_artist) ||
-              albumTracks.find(track => track.artist).artist;
+              albumArtist || albumTracks.find(track => track.artist).artist;
             const allLastModified = albumTracks.map(
               track => new Date(track.last_modified)
             );
-            const last_modified = new Date(
+            const lastModified = new Date(
               Math.max.apply(null, allLastModified)
             );
             const { file } = albumTracks.find(track => track.file);
@@ -89,18 +90,18 @@ class AlbumGrid extends Component {
               album_key: `${title}@${artist}`,
               tracks: albumTracks,
               artist,
-              last_modified,
+              last_modified: lastModified,
               title,
               thumb_url: `${MoodeDomain}/imagesw/thmcache/${hash}.jpg`
             };
           })
           .sort((a, b) => b.last_modified - a.last_modified);
 
-        this.setState({
-          ...this.state,
+        this.setState(prevState => ({
+          ...prevState,
           albums: allAlbums,
           isLoading: false
-        });
+        }));
       });
   }
 
