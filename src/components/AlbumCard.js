@@ -54,7 +54,6 @@ class AlbumCard extends PureComponent {
         <CardActionArea>
           <RootRef rootRef={this.domRef}>
             <CardMedia
-              ref="cardMedia"
               className={classes.media}
               image={this.state.hasLoaded ? album.thumb_url : defaultImage}
               title={album.title}
