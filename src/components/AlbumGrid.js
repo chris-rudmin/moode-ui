@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import axios from 'axios';
 import md5 from 'md5';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
@@ -8,6 +7,7 @@ import Typography from '@material-ui/core/Typography';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import AlbumCard from './AlbumCard';
 import { MoodeDomain } from '../config/AppConstants';
+import MoodeCommand from '../services/MoodeCommand';
 
 const styles = () => ({
   root: {
@@ -46,63 +46,60 @@ class AlbumGrid extends Component {
       isLoading: true
     }));
 
-    axios
-      .post(`${MoodeDomain}/command/moode.php?cmd=loadlib`)
-      .then(({ data }) => {
-        const groupByArtist = (acc, track) => {
-          const artist = track.album_artist || track.artist;
-          (acc[artist] = acc[artist] || []).push(track);
-          return acc;
-        };
+    MoodeCommand.loadLib().then(({ data }) => {
+      const groupByArtist = (acc, track) => {
+        const artist = track.album_artist || track.artist;
+        (acc[artist] = acc[artist] || []).push(track);
+        return acc;
+      };
 
-        const groupByAlbum = (acc, track) => {
-          (acc[track.album] = acc[track.album] || []).push(track);
-          return acc;
-        };
+      const groupByAlbum = (acc, track) => {
+        (acc[track.album] = acc[track.album] || []).push(track);
+        return acc;
+      };
 
-        const allArtistAlbums = Object.values(
-          data.reduce(groupByArtist, {})
-        ).reduce((acc, artistTracks) => {
-          const artistAlbums = artistTracks.reduce(groupByAlbum, {});
-          return acc.concat(Object.values(artistAlbums));
-        }, []);
+      const allArtistAlbums = Object.values(
+        data.reduce(groupByArtist, {})
+      ).reduce((acc, artistTracks) => {
+        const artistAlbums = artistTracks.reduce(groupByAlbum, {});
+        return acc.concat(Object.values(artistAlbums));
+      }, []);
 
-        const allAlbums = allArtistAlbums
-          .map(albumTracks => {
-            const title = albumTracks.find(track => track.album).album;
-            const albumArtist = (
-              albumTracks.find(track => track.album_artist) || {}
-            ).album_artist;
-            const artist =
-              albumArtist || albumTracks.find(track => track.artist).artist;
-            const allLastModified = albumTracks.map(
-              track => new Date(track.last_modified)
-            );
-            const lastModified = new Date(
-              Math.max.apply(null, allLastModified)
-            );
-            const { file } = albumTracks.find(track => track.file);
-            const hash = encodeURIComponent(
-              md5(file.substring(0, file.lastIndexOf('/')))
-            );
+      const allAlbums = allArtistAlbums
+        .map(albumTracks => {
+          const title = albumTracks.find(track => track.album).album;
+          const albumArtist = (
+            albumTracks.find(track => track.album_artist) || {}
+          ).album_artist;
+          const artist =
+            albumArtist || albumTracks.find(track => track.artist).artist;
+          const allLastModified = albumTracks.map(
+            track => new Date(track.last_modified)
+          );
+          const lastModified = new Date(Math.max.apply(null, allLastModified));
+          const { file } = albumTracks.find(track => track.file);
+          const hash = encodeURIComponent(
+            md5(file.substring(0, file.lastIndexOf('/')))
+          );
+          const fileList = albumTracks.map(track => track.file);
 
-            return {
-              album_key: `${title}@${artist}`,
-              tracks: albumTracks,
-              artist,
-              last_modified: lastModified,
-              title,
-              thumb_url: `${MoodeDomain}/imagesw/thmcache/${hash}.jpg`
-            };
-          })
-          .sort((a, b) => b.last_modified - a.last_modified);
+          return {
+            album_key: `${title}@${artist}`,
+            tracks: fileList,
+            artist,
+            last_modified: lastModified,
+            title,
+            thumb_url: `${MoodeDomain}/imagesw/thmcache/${hash}.jpg`
+          };
+        })
+        .sort((a, b) => b.last_modified - a.last_modified);
 
-        this.setState(prevState => ({
-          ...prevState,
-          albums: allAlbums,
-          isLoading: false
-        }));
-      });
+      this.setState(prevState => ({
+        ...prevState,
+        albums: allAlbums,
+        isLoading: false
+      }));
+    });
   }
 
   render() {
