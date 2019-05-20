@@ -28,3 +28,6 @@ export const AlbumShape = PropTypes.shape({
 });
 
 export const MoodeDomain = 'http://dev-moode.local';
+
+export const cardMargin = 8;
+export const cardMaxWidth = 210 + cardMargin * 2;

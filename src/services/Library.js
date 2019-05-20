@@ -1,7 +1,6 @@
 import md5 from 'md5';
 import { MoodeDomain } from '../config/AppConstants';
 
-
 class Library {
   static groupByArtist(acc, track) {
     const artist = (track.album_artist || track.artist).toLowerCase();
@@ -26,7 +25,9 @@ class Library {
   }
 
   static getLastModified(albumTracks) {
-    const allLastModified = albumTracks.map(track => new Date(track.last_modified));
+    const allLastModified = albumTracks.map(
+      track => new Date(track.last_modified)
+    );
     return new Date(Math.max.apply(null, allLastModified));
   }
 
@@ -46,7 +47,7 @@ class Library {
         const albumKey = `${title}@${artist}`.toLowerCase();
 
         return {
-          title: title,
+          title,
           album_key: albumKey,
           tracks: fileList,
           artist: albumArtist || artist,

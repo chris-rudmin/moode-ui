@@ -7,7 +7,7 @@ import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
 import RootRef from '@material-ui/core/RootRef';
-import { AlbumShape, MoodeDomain } from '../config/AppConstants';
+import { AlbumShape, MoodeDomain, cardMargin } from '../config/AppConstants';
 import MoodeCommand from '../services/MoodeCommand';
 
 const defaultImage = `${MoodeDomain}/images/default-cover-v6.svg`;
@@ -17,7 +17,8 @@ const styles = {
     paddingBottom: '100%'
   },
   card: {
-    flexGrow: 1
+    display: 'inline-block',
+    margin: cardMargin
   }
 };
 
@@ -52,8 +53,8 @@ class AlbumCard extends PureComponent {
     const { classes, album } = this.props;
     return (
       <Card
-        className={classes.card}
         onClick={() => MoodeCommand.clearPlayAll(album.tracks)}
+        className={classes.card}
       >
         <CardActionArea>
           <RootRef rootRef={this.domRef}>
