@@ -1,59 +1,52 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import Measure from 'react-measure';
 import AlbumCard from './AlbumCard';
 import MoodeCommand from '../services/MoodeCommand';
 import Library from '../services/Library';
 import { cardMaxWidth, cardMargin } from '../config/AppConstants';
+import Loading from './Loading';
 
+const totalMargin = cardMargin * 2;
 const styles = () => ({
   root: {
     padding: 40
   },
   cardCluster: {
     '&[data-num-cols="2"] > div': {
-      width: `calc((100%/2) - ${cardMargin * 2}px)`
+      width: `calc((100%/2) - ${totalMargin}px)`
     },
     '&[data-num-cols="3"] > div': {
-      width: `calc((100%/3) - ${cardMargin * 2}px)`
+      width: `calc((100%/3) - ${totalMargin}px)`
     },
     '&[data-num-cols="4"] > div': {
-      width: `calc((100%/4) - ${cardMargin * 2}px)`
+      width: `calc((100%/4) - ${totalMargin}px)`
     },
     '&[data-num-cols="5"] > div': {
-      width: `calc((100%/5) - ${cardMargin * 2}px)`
+      width: `calc((100%/5) - ${totalMargin}px)`
     },
     '&[data-num-cols="6"] > div': {
-      width: `calc((100%/6) - ${cardMargin * 2}px)`
+      width: `calc((100%/6) - ${totalMargin}px)`
     },
     '&[data-num-cols="7"] > div': {
-      width: `calc((100%/7) - ${cardMargin * 2}px)`
+      width: `calc((100%/7) - ${totalMargin}px)`
     },
     '&[data-num-cols="8"] > div': {
-      width: `calc((100%/8) - ${cardMargin * 2}px)`
+      width: `calc((100%/8) - ${totalMargin}px)`
     },
     '&[data-num-cols="9"] > div': {
-      width: `calc((100%/9) - ${cardMargin * 2}px)`
+      width: `calc((100%/9) - ${totalMargin}px)`
     },
     '&[data-num-cols="10"] > div': {
-      width: `calc((100%/10) - ${cardMargin * 2}px)`
+      width: `calc((100%/10) - ${totalMargin}px)`
     },
     '&[data-num-cols="11"] > div': {
-      width: `calc((100%/11) - ${cardMargin * 2}px)`
+      width: `calc((100%/11) - ${totalMargin}px)`
     },
     '&[data-num-cols="12"] > div': {
-      width: `calc((100%/12) - ${cardMargin * 2}px)`
+      width: `calc((100%/12) - ${totalMargin}px)`
     }
-  },
-  loading: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: '100%'
   }
 });
 
@@ -94,12 +87,7 @@ class AlbumGrid extends Component {
     ));
 
     return this.state.isLoading ? (
-      <div className={classes.loading}>
-        <Typography variant="h5" gutterBottom>
-          Loading Library
-        </Typography>
-        <CircularProgress variant="indeterminate" size={80} />
-      </div>
+      <Loading />
     ) : (
       <div className={classes.root}>
         <Measure
