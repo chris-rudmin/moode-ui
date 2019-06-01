@@ -7,7 +7,7 @@ import MoodeCommand from '../services/MoodeCommand';
 import Library from '../services/Library';
 import { cardMaxWidth, cardMargin } from '../config/AppConstants';
 import Loading from './Loading';
-import { useInView } from 'react-intersection-observer'
+//import { useInView } from 'react-intersection-observer'
 
 const totalMargin = cardMargin * 2;
 const styles = () => ({
