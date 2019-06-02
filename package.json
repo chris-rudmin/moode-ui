@@ -10,7 +10,7 @@
     "test:watch": "jest --watch",
     "clean": "rimraf dist",
     "build": "webpack --mode production",
-    "start": "cross-env START_APP_SERVER=true webpack-dev-server --open --mode development",
+    "start": "cross-env START_APP_SERVER=true webpack-dev-server -d --open",
     "lint:fix": "npm run lint -- --fix",
     "lint": "cross-env eslint 'src/**/*.{js,jsx}'",
     "test:e2e": "jest -c jest-e2e.config.js --detectOpenHandles",
@@ -42,7 +42,6 @@
     "prop-types": "^15.7.2",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "react-intersection-observer": "^8.23.0",
     "react-measure": "^2.3.0",
     "react-router-dom": "^5.0.0",
     "styled-components": "^4.2.1"

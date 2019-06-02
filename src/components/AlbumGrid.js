@@ -1,4 +1,4 @@
-import React, { Component, useRef } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Measure from 'react-measure';
@@ -7,12 +7,19 @@ import MoodeCommand from '../services/MoodeCommand';
 import Library from '../services/Library';
 import { cardMaxWidth, cardMargin } from '../config/AppConstants';
 import Loading from './Loading';
-//import { useInView } from 'react-intersection-observer'
+
 
 const totalMargin = cardMargin * 2;
 const styles = () => ({
   root: {
-    padding: 40
+    height: '100%',
+    padding: '0 40px',
+  },
+  measureRef: {
+    height: '100%'
+  },
+  rootRef: {
+    padding: '40px 0'
   },
   cardCluster: {
     '&[data-col-count="2"] > div': {
@@ -55,68 +62,125 @@ class AlbumGrid extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      albums: [],
-      isLoading: false,
+      allAlbums: [],
+      virtualAlbums: [],
+      isLoading: true,
       colCount: 0,
-      rowCount: 0,
-      rowHeight: 0,
+      topCount: 0,
+      topHeight: 0,
+      bottomHeight: 0,
+      topObserver: new IntersectionObserver(() => {}),
+      bottomObserver: new IntersectionObserver(() => {}),
+      rootRef: React.createRef(),
+      topRef: React.createRef(),
+      bottomRef: React.createRef()
     };
   }
 
   componentDidMount() {
-    this.setState(prevState => ({
-      ...prevState,
-      isLoading: true
-    }));
-
     MoodeCommand.loadLib().then(({ data }) => {
-      this.setState(prevState => ({
-        ...prevState,
-        albums: Library.getAllAlbums(data),
+      this.setState(state => ({
+        ...state,
+        allAlbums: Library.getAllAlbums(data),
         isLoading: false
       }));
     });
   }
 
+  onResize({ width, height }) {
+    const colCount = Math.ceil(width / cardMaxWidth);
+    const rowCount = Math.ceil(this.state.allAlbums.length / colCount);
+    const rowHeight = Math.ceil(width / colCount) + 75; // Card width + footer height
+    const totalHeight = rowHeight * rowCount;
+    const cardCount = Math.ceil(height / rowHeight) * colCount * 5;
+    const virtualHeight = Math.ceil(cardCount / colCount) * rowHeight;
+    const rootMargin = Math.floor((virtualHeight - height) / 2);
+    const observerOptions = {
+      rootMargin: `${rootMargin}px 0px`,
+      threshold: 0
+    };
+
+    this.state.topObserver.unobserve(this.state.topRef.current);
+    const topObserver = new IntersectionObserver(entries => {
+      console.log("top", entries);
+      entries.forEach(entry => {
+        const { intersectionRatio, target } = entry;
+        const instersectionHeight = Math.floor(target.clientHeight * intersectionRatio);
+        if (instersectionHeight > rowHeight) {
+          const numRows = Math.floor(instersectionHeight / rowHeight);
+          const numCards = numRows * colCount;
+          const heightChange = numRows * rowHeight
+          this.setState(state => ({
+            ...state,
+            topCount: state.topCount - numCards,
+            topHeight: state.topHeight - heightChange,
+            bottomHeight: state.bottomHeight + heightChange
+          }));
+         }
+      });
+    }, observerOptions);
+    topObserver.observe(this.state.topRef.current);
+
+    this.state.bottomObserver.unobserve(this.state.bottomRef.current);
+    const bottomObserver = new IntersectionObserver(entries => {
+      console.log("bottom", entries);
+      entries.forEach(entry => {
+        const { intersectionRatio, target } = entry;
+        const instersectionHeight = Math.floor(target.clientHeight * intersectionRatio);
+        if (instersectionHeight > rowHeight) {
+          const numRows = Math.floor(instersectionHeight / rowHeight);
+          const numCards = numRows * colCount;
+          const heightChange = numRows * rowHeight
+          this.setState(state => ({
+            ...state,
+            topCount: state.topCount + numCards,
+            topHeight: state.topHeight + heightChange,
+            bottomHeight: state.bottomHeight - heightChange
+          }));
+         }
+      });
+    }, observerOptions);
+    bottomObserver.observe(this.state.bottomRef.current);
+
+    this.setState(state => ({
+      ...state,
+      colCount,
+      cardCount,
+      topObserver,
+      bottomObserver,
+      bottomHeight: totalHeight - virtualHeight,
+    }));
+  }
+
   render() {
     const { classes } = this.props;
-    const albumCards = this.state.albums.map(album => (
-      <AlbumCard key={album.albumKey} album={album}/>
-    ));
+    const albumCards = this.state.allAlbums
+      .slice(this.state.topCount, this.state.topCount + this.state.cardCount)
+      .map(album => (
+        <AlbumCard key={album.albumKey} album={album}/>
+      ));
 
-    return this.state.isLoading ? (
-      <Loading />
-    ) : (
-      <Measure
-        bounds
-        onResize={({ bounds }) => {
-          const colCount = Math.ceil(bounds.width / cardMaxWidth);
-          const rowCount = Math.ceil(this.state.albums.length / colCount);
-          const rowHeight = (bounds.width / colCount) + 68;
-          const viewportHeight = rowHeight * 8;
-          const totalHeight = rowHeight * rowCount;
-          this.setState(prevState => ({
-            ...prevState,
-            colCount,
-            rowCount,
-            rowHeight,
-          }));
-        }}
-      >
-        {({ measureRef }) => (
-          <div className={classes.root}>
-            <div/>
-            <div
-              ref={measureRef}
-              className={classes.cardCluster}
-              data-col-count={this.state.colCount}
-            >
-              {albumCards.slice(0,this.state.colCount*10)}
+    return this.state.isLoading ? ( <Loading /> ) : (
+      <div className={classes.root}>
+        <Measure bounds
+          onResize={({ bounds }) => this.onResize(bounds)}
+        >
+          {({ measureRef }) => (
+            <div ref={measureRef} className={classes.measureRef}>
+              <div className={classes.rootRef}>
+                <div style={{height: this.state.topHeight}} ref={this.state.topRef}/>
+                <div
+                  className={classes.cardCluster}
+                  data-col-count={this.state.colCount}
+                >
+                  {albumCards}
+                </div>
+                <div style={{height: this.state.bottomHeight}} ref={this.state.bottomRef}/>
+              </div>
             </div>
-            <div style={{height: this.state.rowHeight*this.state.rowCount}} />
-          </div>
-        )}
-      </Measure>
+          )}
+        </Measure>
+      </div>
     );
   }
 }
