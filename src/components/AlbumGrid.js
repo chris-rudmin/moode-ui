@@ -170,11 +170,11 @@ class AlbumGrid extends Component {
         >
           {({ measureRef }) => (
             <div ref={measureRef} className={classes.measureRef}>
-              <div style={{height: this.state.topHeight, paddingTop: gridPadding}} ref={this.state.topRef} />
+              <div ref={this.state.topRef} style={{height: this.state.topHeight, paddingTop: gridPadding}} />
               <div
+                ref={this.state.virtualRef}
                 className={classes.cardCluster}
                 data-col-count={this.state.colCount}
-                ref={this.state.virtualRef}
               >
                 {albumCards}
               </div>
