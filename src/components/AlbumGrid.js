@@ -11,15 +11,20 @@ import Loading from './Loading';
 
 const totalMargin = cardMargin * 2;
 const styles = () => ({
-  root: {
+  albumRoot: {
+    height: '100%',
+    width: '80%',
+    overflowY: 'scroll',
+  },
+  measureRef: {
     height: '100%',
     padding: '0 40px',
   },
-  measureRef: {
-    height: '100%'
-  },
   rootRef: {
-    padding: '40px 0'
+    height: '100%',
+  },
+  gridPadding: {
+    padding: '40px 0',
   },
   cardCluster: {
     '&[data-col-count="2"] > div': {
@@ -68,12 +73,14 @@ class AlbumGrid extends Component {
       colCount: 0,
       topCount: 0,
       topHeight: 0,
-      bottomHeight: 0,
-      topObserver: new IntersectionObserver(() => {}),
-      bottomObserver: new IntersectionObserver(() => {}),
+      virtualHeight: 0,
+      totalHeight: 0,
+      rowHeight: 0,
+      observer: new IntersectionObserver(() => {}),
       rootRef: React.createRef(),
       topRef: React.createRef(),
-      bottomRef: React.createRef()
+      bottomRef: React.createRef(),
+      virtualRef: React.createRef()
     };
   }
 
@@ -87,73 +94,75 @@ class AlbumGrid extends Component {
     });
   }
 
+  onIntersection(entries) {
+    const topEntry = entries.find(entry => entry.target === this.state.topRef.current);
+    const virtualEntry = entries.find(entry => entry.target === this.state.virtualRef.current);
+    const bottomEntry = entries.find(entry => entry.target === this.state.bottomRef.current);
+
+    console.log("top", topEntry);
+    console.log('virt', virtualEntry);
+    console.log('bottom', bottomEntry);
+
+
+    // entries.forEach(entry => {
+    //   const isTopEntry = entry.target === this.state.topRef.current;
+    //   const isVirtualEntry = entry.target === this.state.virtualRef.current;
+    //   console.log(isTopEntry, isVirtualEntry, entry);
+    //   const { intersectionRatio, target } = entry;
+    //   const instersectionHeight = Math.floor(target.clientHeight * intersectionRatio);
+    //   if (instersectionHeight > this.state.rowHeight) {
+    //     const isTopEntry = entry.target === this.state.topRef.current;
+    //     const numRows = Math.floor(instersectionHeight / this.state.rowHeight);
+    //     const signedNumRows = isTopEntry ? -numRows : numRows;
+    //     const numCards = signedNumRows * this.state.colCount;
+    //     const heightChange = signedNumRows * this.state.rowHeight;
+
+    //     this.setState(state => ({
+    //       ...state,
+    //       topCount: state.topCount + numCards,
+    //       topHeight: state.topHeight + heightChange,
+    //     }));
+    //    }
+    // });
+  }
+
   onResize({ width, height }) {
-    const colCount = Math.ceil(width / cardMaxWidth);
+    const colCount = Math.ceil((width - 80) / cardMaxWidth);
     const rowCount = Math.ceil(this.state.allAlbums.length / colCount);
-    const rowHeight = Math.ceil(width / colCount) + 75; // Card width + footer height
+    const rowHeight = (width / colCount) + 75; // Card width + footer height
     const totalHeight = rowHeight * rowCount;
     const cardCount = Math.ceil(height / rowHeight) * colCount * 5;
-    const virtualHeight = Math.ceil(cardCount / colCount) * rowHeight;
-    const rootMargin = Math.floor((virtualHeight - height) / 2);
-    const observerOptions = {
+    const virtualHeight = (cardCount / colCount) * rowHeight;
+    const rootMargin = (virtualHeight - height) / 2;
+
+    this.state.observer.unobserve(this.state.topRef.current);
+    this.state.observer.unobserve(this.state.virtualRef.current);
+    this.state.observer.unobserve(this.state.bottomRef.current);
+
+    const observer = new IntersectionObserver(entries => this.onIntersection(entries), {
+      root: this.state.rootRef.current,
       rootMargin: `${rootMargin}px 0px`,
-      threshold: 0
-    };
+      threshold: 0.8
+    });
 
-    this.state.topObserver.unobserve(this.state.topRef.current);
-    const topObserver = new IntersectionObserver(entries => {
-      console.log("top", entries);
-      entries.forEach(entry => {
-        const { intersectionRatio, target } = entry;
-        const instersectionHeight = Math.floor(target.clientHeight * intersectionRatio);
-        if (instersectionHeight > rowHeight) {
-          const numRows = Math.floor(instersectionHeight / rowHeight);
-          const numCards = numRows * colCount;
-          const heightChange = numRows * rowHeight
-          this.setState(state => ({
-            ...state,
-            topCount: state.topCount - numCards,
-            topHeight: state.topHeight - heightChange,
-            bottomHeight: state.bottomHeight + heightChange
-          }));
-         }
-      });
-    }, observerOptions);
-    topObserver.observe(this.state.topRef.current);
-
-    this.state.bottomObserver.unobserve(this.state.bottomRef.current);
-    const bottomObserver = new IntersectionObserver(entries => {
-      console.log("bottom", entries);
-      entries.forEach(entry => {
-        const { intersectionRatio, target } = entry;
-        const instersectionHeight = Math.floor(target.clientHeight * intersectionRatio);
-        if (instersectionHeight > rowHeight) {
-          const numRows = Math.floor(instersectionHeight / rowHeight);
-          const numCards = numRows * colCount;
-          const heightChange = numRows * rowHeight
-          this.setState(state => ({
-            ...state,
-            topCount: state.topCount + numCards,
-            topHeight: state.topHeight + heightChange,
-            bottomHeight: state.bottomHeight - heightChange
-          }));
-         }
-      });
-    }, observerOptions);
-    bottomObserver.observe(this.state.bottomRef.current);
+    observer.observe(this.state.topRef.current);
+    observer.observe(this.state.virtualRef.current);
+    observer.observe(this.state.bottomRef.current);
 
     this.setState(state => ({
       ...state,
       colCount,
+      rowHeight,
       cardCount,
-      topObserver,
-      bottomObserver,
-      bottomHeight: totalHeight - virtualHeight,
+      observer,
+      virtualHeight,
+      totalHeight,
     }));
   }
 
   render() {
     const { classes } = this.props;
+    const bottomHeight = this.state.totalHeight - this.state.virtualHeight - this.state.topHeight;
     const albumCards = this.state.allAlbums
       .slice(this.state.topCount, this.state.topCount + this.state.cardCount)
       .map(album => (
@@ -161,21 +170,24 @@ class AlbumGrid extends Component {
       ));
 
     return this.state.isLoading ? ( <Loading /> ) : (
-      <div className={classes.root}>
+      <div className={classes.albumRoot}>
         <Measure bounds
           onResize={({ bounds }) => this.onResize(bounds)}
         >
           {({ measureRef }) => (
             <div ref={measureRef} className={classes.measureRef}>
-              <div className={classes.rootRef}>
-                <div style={{height: this.state.topHeight}} ref={this.state.topRef}/>
-                <div
-                  className={classes.cardCluster}
-                  data-col-count={this.state.colCount}
-                >
-                  {albumCards}
+              <div ref={this.state.rootRef} className={classes.rootRef}>
+                <div className={classes.gridPadding}>
+                  <div style={{height: this.state.topHeight}} ref={this.state.topRef}/>
+                  <div
+                    className={classes.cardCluster}
+                    data-col-count={this.state.colCount}
+                    ref={this.state.virtualRef}
+                  >
+                    {albumCards}
+                  </div>
+                  <div ref={this.state.bottomRef} style={{height: bottomHeight}}/>
                 </div>
-                <div style={{height: this.state.bottomHeight}} ref={this.state.bottomRef}/>
               </div>
             </div>
           )}
