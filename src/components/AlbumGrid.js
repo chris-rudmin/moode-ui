@@ -5,26 +5,20 @@ import Measure from 'react-measure';
 import AlbumCard from './AlbumCard';
 import MoodeCommand from '../services/MoodeCommand';
 import Library from '../services/Library';
-import { cardMaxWidth, cardMargin } from '../config/AppConstants';
+import { cardMaxWidth, cardMargin, gridPadding } from '../config/AppConstants';
 import Loading from './Loading';
 
 
 const totalMargin = cardMargin * 2;
 const styles = () => ({
-  albumRoot: {
+  rootRef: {
     height: '100%',
     width: '80%',
     overflowY: 'scroll',
+    padding: `0 ${gridPadding}px`,
   },
   measureRef: {
     height: '100%',
-    padding: '0 40px',
-  },
-  rootRef: {
-    height: '100%',
-  },
-  gridPadding: {
-    padding: '40px 0',
   },
   cardCluster: {
     '&[data-col-count="2"] > div': {
@@ -127,7 +121,7 @@ class AlbumGrid extends Component {
   }
 
   onResize({ width, height }) {
-    const colCount = Math.ceil((width - 80) / cardMaxWidth);
+    const colCount = Math.ceil(width / cardMaxWidth);
     const rowCount = Math.ceil(this.state.allAlbums.length / colCount);
     const rowHeight = (width / colCount) + 75; // Card width + footer height
     const totalHeight = rowHeight * rowCount;
@@ -142,7 +136,7 @@ class AlbumGrid extends Component {
     const observer = new IntersectionObserver(entries => this.onIntersection(entries), {
       root: this.state.rootRef.current,
       rootMargin: `${rootMargin}px 0px`,
-      threshold: 0.8
+      threshold: 0.2
     });
 
     observer.observe(this.state.topRef.current);
@@ -170,25 +164,21 @@ class AlbumGrid extends Component {
       ));
 
     return this.state.isLoading ? ( <Loading /> ) : (
-      <div className={classes.albumRoot}>
+      <div ref={this.state.rootRef} className={classes.rootRef}>
         <Measure bounds
           onResize={({ bounds }) => this.onResize(bounds)}
         >
           {({ measureRef }) => (
             <div ref={measureRef} className={classes.measureRef}>
-              <div ref={this.state.rootRef} className={classes.rootRef}>
-                <div className={classes.gridPadding}>
-                  <div style={{height: this.state.topHeight}} ref={this.state.topRef}/>
-                  <div
-                    className={classes.cardCluster}
-                    data-col-count={this.state.colCount}
-                    ref={this.state.virtualRef}
-                  >
-                    {albumCards}
-                  </div>
-                  <div ref={this.state.bottomRef} style={{height: bottomHeight}}/>
-                </div>
+              <div style={{height: this.state.topHeight, paddingTop: gridPadding}} ref={this.state.topRef} />
+              <div
+                className={classes.cardCluster}
+                data-col-count={this.state.colCount}
+                ref={this.state.virtualRef}
+              >
+                {albumCards}
               </div>
+              <div ref={this.state.bottomRef} style={{height: bottomHeight, paddingBottom: gridPadding}} />
             </div>
           )}
         </Measure>
