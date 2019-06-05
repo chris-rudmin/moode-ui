@@ -38,20 +38,17 @@ class Library {
         const title = Library.getAlbumProp(albumTracks, 'album');
         const albumArtist = Library.getAlbumProp(albumTracks, 'album_artist');
         const artist = Library.getAlbumProp(albumTracks, 'artist');
-        const lastModified = Library.getLastModified(albumTracks);
         const { file } = albumTracks.find(track => track.file);
         const hash = encodeURIComponent(
           md5(file.substring(0, file.lastIndexOf('/')))
         );
-        const fileList = albumTracks.map(track => track.file);
-        const albumKey = `${title}@${artist}`.toLowerCase();
 
         return {
           title,
-          album_key: albumKey,
-          tracks: fileList,
+          album_key: `${title}@${artist}@${hash}`.toLowerCase(),
+          tracks: albumTracks.map(track => track.file),
           artist: albumArtist || artist,
-          last_modified: lastModified,
+          last_modified: Library.getLastModified(albumTracks),
           thumb_url: `${MoodeDomain}/imagesw/thmcache/${hash}.jpg`
         };
       })
