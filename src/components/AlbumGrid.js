@@ -94,7 +94,7 @@ class AlbumGrid extends Component {
   onIntersection(entries) {
     const [entry] = entries;
     const { virtual } = this.state;
-    const heightDiff = entry.rootBounds.top - entry.boundingClientRect.top - virtual.rowHeight;
+    const heightDiff = entry.rootBounds.top - entry.boundingClientRect.top;
     const rowDiff = heightDiff / virtual.rowHeight;
     const roundedRowDiff = rowDiff > 0 ? Math.ceil(rowDiff) : Math.floor(rowDiff); 
     const topRows = virtual.topRows + roundedRowDiff;
@@ -118,7 +118,7 @@ class AlbumGrid extends Component {
       const rowHeight = (width / colCount) + 75; // Card width + footer height
       const actualRows = Math.ceil(height * 4 / rowHeight);
       const actualHeight = actualRows * rowHeight;
-      const rootMargin = (actualHeight - (rowHeight * 2) - height) / 2;
+      const rootMargin = (actualHeight - height) / 2;
       const cardCount = actualRows * colCount;
       const virtualRows = totalRows - actualRows;
       const { viewPort, virtualCards } = state.refs;
