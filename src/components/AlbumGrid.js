@@ -19,6 +19,9 @@ const styles = () => ({
   measureRef: {
     height: '100%',
   },
+  gridPadding: {
+    padding: `${gridPadding}px 0`,
+  },
   cardCluster: {
     '&[data-col-count="2"] > div': {
       width: `calc((100%/2) - ${totalMargin}px)`
@@ -64,15 +67,14 @@ class AlbumGrid extends Component {
       isLoading: true,
       refs: {
         viewPort: React.createRef(),
-        virtualTop: React.createRef(),
-        virtualBottom: React.createRef(),
+        virtualCards: React.createRef(),
       },
       virtual: {
         colCount: 0,
-        observer: new IntersectionObserver(() => {}),
         rowHeight: 0,
         topRows: 0,
         virtualRows: 0,
+        observer: new IntersectionObserver(() => {}),
       }
     };
   }
@@ -89,90 +91,79 @@ class AlbumGrid extends Component {
     });
   }
 
-  scroll(heightDiff) {
-    this.setState(state => {
-      const { virtual } = state;
-      const rowDiff = heightDiff / virtual.rowHeight;
-      const roundedRowDiff = rowDiff > 0 ? Math.ceil(rowDiff) : Math.floor(rowDiff); 
-      const topRows = virtual.topRows + roundedRowDiff;
-      const boundedTopRows = Math.min(Math.max(0, topRows), virtual.virtualRows);
-      return {
+  onIntersection(entries) {
+    const [entry] = entries;
+    const { virtual } = this.state;
+    const heightDiff = entry.rootBounds.top - entry.boundingClientRect.top - virtual.rowHeight;
+    const rowDiff = heightDiff / virtual.rowHeight;
+    const roundedRowDiff = rowDiff > 0 ? Math.ceil(rowDiff) : Math.floor(rowDiff); 
+    const topRows = virtual.topRows + roundedRowDiff;
+    const boundedTopRows = Math.min(Math.max(0, topRows), virtual.virtualRows);
+
+    if (boundedTopRows !== virtual.topRows) {
+      this.setState(state => ({
         ...state,
         virtual: {
           ...virtual,
           topRows: boundedTopRows,
         }
-      };
-    });
-  }
-
-  onIntersection(entries) {
-    const { virtualTop, virtualBottom } = this.state.refs;
-    const topEntry = entries.find(entry => entry.target === virtualTop.current);
-    const bottomEntry = entries.find(entry => entry.target === virtualBottom.current);
-
-    // scrolling up
-    if (topEntry && topEntry.isIntersecting) {
-      this.scroll(topEntry.rootBounds.top - topEntry.boundingClientRect.bottom);
-    }
-
-    // scrolling down
-    else if (bottomEntry && bottomEntry.isIntersecting) {
-      this.scroll(bottomEntry.rootBounds.bottom - bottomEntry.boundingClientRect.top);
+      }));
     }
   }
 
   onResize({ width, height }) {
-    const colCount = Math.ceil(width / cardMaxWidth);
-    const totalRows = Math.ceil(this.state.allAlbumCards.length / colCount);
-    const rowHeight = (width / colCount) + 75; // Card width + footer height
-    const actualRows = Math.ceil(height * 4 / rowHeight);
-    const actualHeight = actualRows * rowHeight;
-    const rootMargin = (actualHeight - (rowHeight * 2) - height) / 2;
-    const cardCount = actualRows * colCount;
-    const virtualRows = totalRows - actualRows;
-    const { viewPort, virtualTop, virtualBottom } = this.state.refs;
+    this.setState(state => {
+      const colCount = Math.ceil(width / cardMaxWidth);
+      const totalRows = Math.ceil(state.allAlbumCards.length / colCount);
+      const rowHeight = (width / colCount) + 75; // Card width + footer height
+      const actualRows = Math.ceil(height * 4 / rowHeight);
+      const actualHeight = actualRows * rowHeight;
+      const rootMargin = (actualHeight - (rowHeight * 2) - height) / 2;
+      const cardCount = actualRows * colCount;
+      const virtualRows = totalRows - actualRows;
+      const { viewPort, virtualCards } = state.refs;
+      const observer = new IntersectionObserver(entries => this.onIntersection(entries), {
+        root: viewPort.current,
+        rootMargin: `${rootMargin}px 0px`,
+        threshold: [0, 0.1, 0.2, 0.4, 0.6, 0.8],
+      });
 
-    this.state.virtual.observer.disconnect();
-    const observer = new IntersectionObserver(entries => this.onIntersection(entries), {
-      root: viewPort.current,
-      rootMargin: `${rootMargin}px 0px`,
-      threshold: [0, 0.0001, 0.0003, 0.0006, 0.001, 0.003, 0.006, 0.01, 0.03, 0.06, 0.1, 0.3, 0.6],
+      state.virtual.observer.disconnect();
+      observer.observe(virtualCards.current);
+
+      return {
+        ...state,
+        virtual: {
+          ...state.virtual,
+          colCount,
+          rowHeight,
+          cardCount,
+          virtualRows,
+          observer,
+        },
+      };
     });
-
-    observer.observe(virtualTop.current);
-    observer.observe(virtualBottom.current); 
-
-    this.setState(state => ({
-      ...state,
-      virtual: {
-        ...state.virtual,
-        colCount,
-        rowHeight,
-        cardCount,
-        observer,
-        virtualRows,
-      }
-    }));
   }
 
   render() {
     const { classes } = this.props;
-    const { refs, virtual } = this.state;
+    const { refs, virtual, allAlbumCards, isLoading } = this.state;
     const cardOffset = virtual.topRows * virtual.colCount;
     const topHeight = virtual.topRows * virtual.rowHeight;
     const bottomHeight = (virtual.virtualRows - virtual.topRows) * virtual.rowHeight;
 
-    return this.state.isLoading ? ( <Loading /> ) : (
+    return isLoading ? ( <Loading /> ) : (
       <div ref={refs.viewPort} className={classes.viewPort}>
         <Measure bounds onResize={({ bounds }) => this.onResize(bounds)} >
           {({ measureRef }) => (
             <div ref={measureRef} className={classes.measureRef}>
-              <div ref={refs.virtualTop} style={{height: topHeight, paddingTop: gridPadding}} />
-              <div className={classes.cardCluster} data-col-count={virtual.colCount} >
-                {this.state.allAlbumCards.slice(cardOffset, cardOffset + virtual.cardCount)}
+              <div className={classes.gridPadding}>
+                <div style={{height: topHeight}} />
+                <div ref={refs.virtualCards} className={classes.cardCluster} data-col-count={virtual.colCount} >
+                  {allAlbumCards.slice(cardOffset, cardOffset + virtual.cardCount)}
+                </div>
+                <div style={{height: bottomHeight}} />
               </div>
-              <div ref={refs.virtualBottom} style={{height: bottomHeight, paddingBottom: gridPadding}} />
             </div>
           )}
         </Measure>
