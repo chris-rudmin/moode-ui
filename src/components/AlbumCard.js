@@ -21,13 +21,6 @@ const styles = {
 };
 
 class AlbumCard extends PureComponent {
-  constructor(props) {
-    super(props);
-    this.state = {
-      hasLoaded: false
-    };
-  }
-
   render() {
     const { classes, album } = this.props;
     return (

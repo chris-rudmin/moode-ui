@@ -8,19 +8,18 @@ import Library from '../services/Library';
 import { cardMaxWidth, cardMargin, gridPadding } from '../config/AppConstants';
 import Loading from './Loading';
 
-
 const totalMargin = cardMargin * 2;
 const styles = () => ({
   viewPort: {
     height: '100%',
     overflowY: 'scroll',
-    padding: `0 ${gridPadding}px`,
+    padding: `0 ${gridPadding}px`
   },
   measureRef: {
-    height: '100%',
+    height: '100%'
   },
   gridPadding: {
-    padding: `${gridPadding}px 0`,
+    padding: `${gridPadding}px 0`
   },
   cardCluster: {
     '&[data-col-count="2"] > div': {
@@ -63,18 +62,18 @@ class AlbumGrid extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      allAlbumCards: [(<div/>)],
+      allAlbumCards: [<div />],
       isLoading: true,
       refs: {
         viewPort: React.createRef(),
-        virtualCards: React.createRef(),
+        virtualCards: React.createRef()
       },
       virtual: {
         colCount: 0,
         rowHeight: 0,
         topRows: 0,
         virtualRows: 0,
-        observer: new IntersectionObserver(() => {}),
+        observer: new IntersectionObserver(() => {})
       }
     };
   }
@@ -84,7 +83,7 @@ class AlbumGrid extends Component {
       this.setState(state => ({
         ...state,
         allAlbumCards: Library.getAllAlbums(data).map(album => (
-          <AlbumCard key={album.album_key} album={album}/>
+          <AlbumCard key={album.album_key} album={album} />
         )),
         isLoading: false
       }));
@@ -95,22 +94,23 @@ class AlbumGrid extends Component {
     this.state.virtual.observer.observe(this.state.refs.virtualCards.current);
   }
 
-  onIntersection(entries, observer) {
+  onIntersection(entries) {
     const [entry] = entries;
     const { virtual } = this.state;
-    const heightDiff = entry.rootBounds.top - entry.boundingClientRect.top + virtual.rowHeight;
+    const heightDiff =
+      entry.rootBounds.top - entry.boundingClientRect.top + virtual.rowHeight;
     const rowDiff = Math.trunc(heightDiff / virtual.rowHeight);
     const topRows = virtual.topRows + rowDiff;
     const boundedTopRows = Math.min(Math.max(0, topRows), virtual.virtualRows);
 
     if (boundedTopRows !== virtual.topRows) {
-      observer.disconnect();
+      virtual.observer.disconnect();
 
       this.setState(state => ({
         ...state,
         virtual: {
           ...virtual,
-          topRows: boundedTopRows,
+          topRows: boundedTopRows
         }
       }));
     }
@@ -121,18 +121,21 @@ class AlbumGrid extends Component {
     this.setState(state => {
       const colCount = Math.ceil(width / cardMaxWidth);
       const totalRows = Math.ceil(state.allAlbumCards.length / colCount);
-      const rowHeight = (width / colCount) + 75; // Card width + footer height
+      const rowHeight = width / colCount + 75; // Card width + footer height
       const actualRows = 7;
       const actualHeight = actualRows * rowHeight;
       const rootMargin = (actualHeight - height) / 2 + rowHeight;
       const cardCount = actualRows * colCount;
       const virtualRows = totalRows - actualRows;
-      const { viewPort, virtualCards } = state.refs;
-      const observer = new IntersectionObserver((entries, observer) => this.onIntersection(entries, observer), {
-        root: viewPort.current,
-        rootMargin: `${rootMargin}px 0px`,
-        threshold: [0, 0.96],
-      });
+      const { viewPort } = state.refs;
+      const observer = new IntersectionObserver(
+        entries => this.onIntersection(entries),
+        {
+          root: viewPort.current,
+          rootMargin: `${rootMargin}px 0px`,
+          threshold: [0, 0.96]
+        }
+      );
 
       return {
         ...state,
@@ -142,8 +145,8 @@ class AlbumGrid extends Component {
           rowHeight,
           cardCount,
           virtualRows,
-          observer,
-        },
+          observer
+        }
       };
     });
   }
@@ -153,25 +156,35 @@ class AlbumGrid extends Component {
     const { refs, virtual, allAlbumCards, isLoading } = this.state;
     const cardOffset = virtual.topRows * virtual.colCount;
     const topHeight = virtual.topRows * virtual.rowHeight;
-    const bottomHeight = (virtual.virtualRows - virtual.topRows) * virtual.rowHeight;
+    const bottomHeight =
+      (virtual.virtualRows - virtual.topRows) * virtual.rowHeight;
 
-    return isLoading ? ( <Loading /> ) : (
+    return isLoading ? (
+      <Loading />
+    ) : (
       <div ref={refs.viewPort} className={classes.viewPort}>
-        <Measure bounds onResize={({ bounds }) => this.onResize(bounds)} >
+        <Measure bounds onResize={({ bounds }) => this.onResize(bounds)}>
           {({ measureRef }) => (
             <div ref={measureRef} className={classes.measureRef}>
               <div className={classes.gridPadding}>
-                <div style={{height: topHeight}} />
-                <div ref={refs.virtualCards} className={classes.cardCluster} data-col-count={virtual.colCount} >
-                  {allAlbumCards.slice(cardOffset, cardOffset + virtual.cardCount)}
+                <div style={{ height: topHeight }} />
+                <div
+                  ref={refs.virtualCards}
+                  className={classes.cardCluster}
+                  data-col-count={virtual.colCount}
+                >
+                  {allAlbumCards.slice(
+                    cardOffset,
+                    cardOffset + virtual.cardCount
+                  )}
                 </div>
-                <div style={{height: bottomHeight}} />
+                <div style={{ height: bottomHeight }} />
               </div>
             </div>
           )}
         </Measure>
       </div>
-    );  
+    );
   }
 }
 
