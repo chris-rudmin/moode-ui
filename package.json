@@ -10,7 +10,7 @@
     "test:watch": "jest --watch",
     "clean": "rimraf dist",
     "build": "webpack --mode production",
-    "start": "cross-env START_APP_SERVER=true webpack-dev-server --open --mode development",
+    "start": "cross-env START_APP_SERVER=true webpack-dev-server -d --open",
     "lint:fix": "npm run lint -- --fix",
     "lint": "cross-env eslint 'src/**/*.{js,jsx}'",
     "test:e2e": "jest -c jest-e2e.config.js --detectOpenHandles",
