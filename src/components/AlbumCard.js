@@ -6,17 +6,21 @@ import CardActionArea from '@material-ui/core/CardActionArea';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
-import { AlbumShape, cardMargin } from '../config/AppConstants';
+import { AlbumShape, cardMargin, MoodeDomain } from '../config/AppConstants';
 import MoodeCommand from '../services/MoodeCommand';
 
 const styles = {
   media: {
     width: '100%',
-    paddingBottom: '100%'
+    paddingBottom: '100%',
+  },
+  mediaFallback: {
+    backgroundImage: `url(${MoodeDomain}/images/default-cover-v6.svg)`,
+    backgroundColor: 'lightgrey',
   },
   card: {
     display: 'inline-block',
-    margin: cardMargin
+    margin: cardMargin,
   }
 };
 
@@ -29,11 +33,13 @@ class AlbumCard extends PureComponent {
         className={classes.card}
       >
         <CardActionArea>
-          <CardMedia
-            className={classes.media}
-            image={album.thumb_url}
-            title={album.title}
-          />
+          <div className={classes.mediaFallback}>
+            <CardMedia
+              className={classes.media}
+              image={album.thumb_url}
+              title={album.title}
+            />
+          </div>
           <CardContent>
             <Typography variant="body1" noWrap>
               {album.title}
