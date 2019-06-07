@@ -2,21 +2,14 @@ import md5 from 'md5';
 import { MoodeDomain } from '../config/AppConstants';
 
 class Library {
-  static groupByArtist(acc, track) {
-    const artist = (track.album_artist || track.artist).toLowerCase();
-    (acc[artist] = acc[artist] || []).push(track);
-    return acc;
+  static addAlbumKey(track) {
+    track.key = `${track.album}@${track.album_artist || track.artist}`.toLowerCase();
+    return track;
   }
 
   static groupByAlbum(acc, track) {
-    const album = track.album.toLowerCase();
-    (acc[album] = acc[album] || []).push(track);
+    (acc[track.key] = acc[track.key] || []).push(track);
     return acc;
-  }
-
-  static groupByArtistAlbum(acc, artistTracks) {
-    const artistAlbums = artistTracks.reduce(Library.groupByAlbum, {});
-    return acc.concat(Object.values(artistAlbums));
   }
 
   static getAlbumProp(albumTracks, prop) {
@@ -32,8 +25,7 @@ class Library {
   }
 
   static getAllAlbums(data) {
-    return Object.values(data.reduce(Library.groupByArtist, {}))
-      .reduce(Library.groupByArtistAlbum, [])
+    return Object.values(data.map(Library.addAlbumKey).reduce(Library.groupByAlbum, {}))
       .map(albumTracks => {
         const title = Library.getAlbumProp(albumTracks, 'album');
         const albumArtist = Library.getAlbumProp(albumTracks, 'album_artist');
@@ -45,7 +37,7 @@ class Library {
 
         return {
           title,
-          album_key: `${title}@${artist}@${hash}`.toLowerCase(),
+          album_key: Library.getAlbumProp(albumTracks, 'key'),
           tracks: albumTracks.map(track => track.file),
           artist: albumArtist || artist,
           last_modified: Library.getLastModified(albumTracks),
