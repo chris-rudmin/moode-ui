@@ -73,7 +73,7 @@ class AlbumGrid extends Component {
         rowHeight: 0,
         topRows: 0,
         virtualRows: 0,
-        observer: new IntersectionObserver(() => {})
+        observer: new IntersectionObserver(() => {}),
       }
     };
   }
@@ -91,7 +91,8 @@ class AlbumGrid extends Component {
   }
 
   componentDidUpdate() {
-    this.state.virtual.observer.observe(this.state.refs.cardCluster.current);
+    const { observer } = this.state.virtual;
+    observer.observe(this.state.refs.cardCluster.current);
   }
 
   onScroll(newTopRows) {
@@ -117,13 +118,13 @@ class AlbumGrid extends Component {
     const bottomHeightDiff = entry.rootBounds.bottom - entry.boundingClientRect.bottom;
 
     // scroll down
-    if (bottomHeightDiff < 0) {
-      this.onScroll(Math.floor(bottomHeightDiff / rowHeight) + topRows);
+    if (topHeightDiff > 0) {
+      this.onScroll(Math.ceil(topHeightDiff / rowHeight) + topRows);
     }
 
     // scroll up
-    else if (topHeightDiff > 0) {
-      this.onScroll(Math.ceil(topHeightDiff / rowHeight) + topRows);
+    else if (bottomHeightDiff < 0) {
+      this.onScroll(Math.floor(bottomHeightDiff / rowHeight) + topRows);
     }
   }
 
@@ -144,7 +145,7 @@ class AlbumGrid extends Component {
         {
           root: viewPort.current,
           rootMargin: `${rootMargin}px 0px`,
-          threshold: [0,1],
+          threshold: [0, 1],
         }
       );
 
@@ -156,7 +157,7 @@ class AlbumGrid extends Component {
           rowHeight,
           cardCount,
           virtualRows,
-          observer
+          observer,
         }
       };
     });
