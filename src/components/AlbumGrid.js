@@ -66,7 +66,7 @@ class AlbumGrid extends Component {
       isLoading: true,
       refs: {
         viewPort: React.createRef(),
-        virtualCards: React.createRef()
+        cardCluster: React.createRef()
       },
       virtual: {
         colCount: 0,
@@ -91,26 +91,39 @@ class AlbumGrid extends Component {
   }
 
   componentDidUpdate() {
-    this.state.virtual.observer.observe(this.state.refs.virtualCards.current);
+    this.state.virtual.observer.observe(this.state.refs.cardCluster.current);
+  }
+
+  onScroll(newTopRows) {
+    const { virtualRows, observer, topRows } = this.state.virtual;
+    const boundedTopRows = Math.min(Math.max(0, newTopRows), virtualRows);
+
+    if (boundedTopRows !== topRows) {
+      observer.disconnect();
+      this.setState(state => ({
+        ...state,
+        virtual: {
+          ...state.virtual,
+          topRows: boundedTopRows,
+        }
+      }));
+    }
   }
 
   onIntersection(entries) {
     const [entry] = entries;
-    const { virtual } = this.state;
-    const heightDiff = entry.rootBounds.top - entry.boundingClientRect.top + virtual.rowHeight * 1.5;
-    const rowDiff = Math.trunc(heightDiff / virtual.rowHeight);
-    const topRows = virtual.topRows + rowDiff;
-    const boundedTopRows = Math.min(Math.max(0, topRows), virtual.virtualRows);
+    const { rowHeight, topRows } = this.state.virtual;
+    const topHeightDiff = entry.rootBounds.top - entry.boundingClientRect.top;
+    const bottomHeightDiff = entry.rootBounds.bottom - entry.boundingClientRect.bottom;
 
-    if (boundedTopRows !== virtual.topRows) {
-      virtual.observer.disconnect();
-      this.setState(state => ({
-        ...state,
-        virtual: {
-          ...virtual,
-          topRows: boundedTopRows
-        }
-      }));
+    // scroll down
+    if (bottomHeightDiff < 0) {
+      this.onScroll(Math.floor(bottomHeightDiff / rowHeight) + topRows);
+    }
+
+    // scroll up
+    else if (topHeightDiff > 0) {
+      this.onScroll(Math.ceil(topHeightDiff / rowHeight) + topRows);
     }
   }
 
@@ -119,10 +132,10 @@ class AlbumGrid extends Component {
     this.setState(state => {
       const colCount = Math.ceil(width / cardMaxWidth);
       const totalRows = Math.ceil(state.allAlbumCards.length / colCount);
-      const rowHeight = width / colCount + 75; // Card width + footer height
+      const rowHeight = width / colCount + 80; // Card media height + card footer height + card border height
       const actualRows = 8;
       const actualHeight = actualRows * rowHeight;
-      const rootMargin = (actualHeight - height + rowHeight) / 2 + rowHeight;
+      const rootMargin =  (actualHeight - height + rowHeight) / 2;
       const cardCount = actualRows * colCount;
       const virtualRows = totalRows - actualRows;
       const { viewPort } = state.refs;
@@ -131,7 +144,7 @@ class AlbumGrid extends Component {
         {
           root: viewPort.current,
           rootMargin: `${rootMargin}px 0px`,
-          threshold: [0,1]
+          threshold: [0,1],
         }
       );
 
@@ -167,7 +180,7 @@ class AlbumGrid extends Component {
               <div className={classes.gridPadding}>
                 <div style={{ height: topHeight }} />
                 <div
-                  ref={refs.virtualCards}
+                  ref={refs.cardCluster}
                   className={classes.cardCluster}
                   data-col-count={virtual.colCount}
                 >
