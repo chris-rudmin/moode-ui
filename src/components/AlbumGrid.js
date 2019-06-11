@@ -73,7 +73,7 @@ class AlbumGrid extends Component {
         rowHeight: 0,
         topRows: 0,
         virtualRows: 0,
-        observer: new IntersectionObserver(() => {}),
+        observer: new IntersectionObserver(() => {})
       }
     };
   }
@@ -105,7 +105,7 @@ class AlbumGrid extends Component {
         ...state,
         virtual: {
           ...state.virtual,
-          topRows: boundedTopRows,
+          topRows: boundedTopRows
         }
       }));
     }
@@ -115,7 +115,8 @@ class AlbumGrid extends Component {
     const [entry] = entries;
     const { rowHeight, topRows } = this.state.virtual;
     const topHeightDiff = entry.rootBounds.top - entry.boundingClientRect.top;
-    const bottomHeightDiff = entry.rootBounds.bottom - entry.boundingClientRect.bottom;
+    const bottomHeightDiff =
+      entry.rootBounds.bottom - entry.boundingClientRect.bottom;
 
     // scroll down
     if (topHeightDiff > 0) {
@@ -134,9 +135,9 @@ class AlbumGrid extends Component {
       const colCount = Math.ceil(width / cardMaxWidth);
       const totalRows = Math.ceil(state.allAlbumCards.length / colCount);
       const rowHeight = width / colCount + 80; // Card media height + card footer height + card border height
-      const actualRows = 8;
+      const actualRows = 7;
       const actualHeight = actualRows * rowHeight;
-      const rootMargin =  (actualHeight - height + rowHeight) / 2;
+      const rootMargin = (actualHeight - height + rowHeight) / 2;
       const cardCount = actualRows * colCount;
       const virtualRows = totalRows - actualRows;
       const { viewPort } = state.refs;
@@ -145,7 +146,7 @@ class AlbumGrid extends Component {
         {
           root: viewPort.current,
           rootMargin: `${rootMargin}px 0px`,
-          threshold: [0, 1],
+          threshold: [0, 1]
         }
       );
 
@@ -157,7 +158,7 @@ class AlbumGrid extends Component {
           rowHeight,
           cardCount,
           virtualRows,
-          observer,
+          observer
         }
       };
     });

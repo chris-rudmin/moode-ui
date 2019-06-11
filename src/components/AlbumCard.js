@@ -16,7 +16,6 @@ const styles = {
   },
   mediaFallback: {
     backgroundImage: `url(${MoodeDomain}/images/default-cover-v6.svg)`,
-    backgroundColor: 'lightgrey',
   },
   card: {
     display: 'inline-block',

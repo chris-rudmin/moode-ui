@@ -3,8 +3,10 @@ import { MoodeDomain } from '../config/AppConstants';
 
 class Library {
   static addAlbumKey(track) {
-    track.key = `${track.album}@${track.album_artist || track.artist}`.toLowerCase();
-    return track;
+    const modifiedTrack = track;
+    modifiedTrack.key = `${modifiedTrack.album}@${modifiedTrack.album_artist ||
+      modifiedTrack.artist}`.toLowerCase();
+    return modifiedTrack;
   }
 
   static groupByAlbum(acc, track) {
@@ -25,7 +27,9 @@ class Library {
   }
 
   static getAllAlbums(data) {
-    return Object.values(data.map(Library.addAlbumKey).reduce(Library.groupByAlbum, {}))
+    return Object.values(
+      data.map(Library.addAlbumKey).reduce(Library.groupByAlbum, {})
+    )
       .map(albumTracks => {
         const title = Library.getAlbumProp(albumTracks, 'album');
         const albumArtist = Library.getAlbumProp(albumTracks, 'album_artist');

@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { createMuiTheme } from '@material-ui/core/styles';
 
 // export const TrackShape = PropTypes.shape({
 //   album: PropTypes.string,
@@ -32,3 +33,10 @@ export const MoodeDomain = 'http://dev-moode.local';
 export const cardMargin = 8;
 export const cardMaxWidth = 210 + cardMargin * 2;
 export const gridPadding = 40;
+
+export const theme = createMuiTheme({
+  palette: {
+    type: 'dark',
+    primary: { main: '#e040fb' },
+  },
+});
