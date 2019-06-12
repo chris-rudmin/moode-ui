@@ -37,6 +37,6 @@ export const gridPadding = 40;
 export const theme = createMuiTheme({
   palette: {
     type: 'dark',
-    primary: { main: '#e040fb' },
-  },
+    primary: { main: '#e040fb' }
+  }
 });

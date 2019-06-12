@@ -70,7 +70,7 @@ class AlbumGrid extends Component {
         topRows: 0,
         virtualRows: 0,
         cardCount: 0,
-        rootMargin: 0,
+        rootMargin: 0
       }
     };
   }
@@ -91,7 +91,8 @@ class AlbumGrid extends Component {
     const { topRows, rootMargin, rowHeight, virtualRows } = this.state.virtual;
     const topHeight = topRows * rowHeight;
     const scrollHeight = event.target.scrollTop - rootMargin;
-    const newTopRows = Math.trunc((scrollHeight - topHeight) / rowHeight) + topRows;
+    const newTopRows =
+      Math.trunc((scrollHeight - topHeight) / rowHeight) + topRows;
     const boundedTopRows = Math.min(Math.max(0, newTopRows), virtualRows);
 
     if (boundedTopRows !== topRows) {
@@ -124,7 +125,7 @@ class AlbumGrid extends Component {
           rowHeight,
           cardCount,
           virtualRows,
-          rootMargin,
+          rootMargin
         }
       };
     });
@@ -132,7 +133,7 @@ class AlbumGrid extends Component {
 
   render() {
     const { classes } = this.props;
-    const { refs, virtual, allAlbumCards, isLoading } = this.state;
+    const { virtual, allAlbumCards, isLoading } = this.state;
     const cardOffset = virtual.topRows * virtual.colCount;
     const topHeight = virtual.topRows * virtual.rowHeight;
     const bottomHeight =
@@ -141,7 +142,10 @@ class AlbumGrid extends Component {
     return isLoading ? (
       <Loading />
     ) : (
-      <div onScroll={event => this.onScroll(event)} className={classes.viewPort}>
+      <div
+        onScroll={event => this.onScroll(event)}
+        className={classes.viewPort}
+      >
         <Measure bounds onResize={({ bounds }) => this.onResize(bounds)}>
           {({ measureRef }) => (
             <div ref={measureRef} className={classes.measureRef}>

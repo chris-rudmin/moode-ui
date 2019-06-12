@@ -6,13 +6,13 @@ import { withStyles } from '@material-ui/core/styles';
 
 const styles = {
   appBar: {
-    borderBottom: `1px solid`,
+    borderBottom: '1px solid'
   },
   toolbar: {
-    flexWrap: 'wrap',
+    flexWrap: 'wrap'
   },
   toolbarTitle: {
-    flexGrow: 1,
+    flexGrow: 1
   }
 };
 
@@ -20,10 +20,10 @@ class Header extends PureComponent {
   render() {
     const { classes } = this.props;
     return (
-      <AppBar position='static'>
+      <AppBar position="static">
         <Toolbar />
       </AppBar>
-    )
+    );
   }
 }
 

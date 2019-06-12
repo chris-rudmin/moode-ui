@@ -12,14 +12,14 @@ import MoodeCommand from '../services/MoodeCommand';
 const styles = {
   media: {
     width: '100%',
-    paddingBottom: '100%',
+    paddingBottom: '100%'
   },
   mediaFallback: {
-    backgroundImage: `url(${MoodeDomain}/images/default-cover-v6.svg)`,
+    backgroundImage: `url(${MoodeDomain}/images/default-cover-v6.svg)`
   },
   card: {
     display: 'inline-block',
-    margin: cardMargin,
+    margin: cardMargin
   }
 };
 
