@@ -11,7 +11,7 @@ import Loading from './Loading';
 const totalMargin = cardMargin * 2;
 const styles = () => ({
   viewPort: {
-    height: '100%',
+    flex: 1,
     overflowY: 'scroll',
     padding: `0 ${gridPadding}px`
   },
