@@ -13,13 +13,13 @@ const styles = () => ({
   viewPort: {
     flex: 1,
     overflowY: 'scroll',
-    padding: `0 ${gridPadding}px`
+    padding: `0 40px`
   },
   measureRef: {
     height: '100%'
   },
   gridPadding: {
-    padding: `${gridPadding}px 0`
+    padding: `20px 0`
   },
   cardCluster: {
     '&[data-col-count="2"] > div': {
