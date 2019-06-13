@@ -5,7 +5,7 @@ import Measure from 'react-measure';
 import AlbumCard from './AlbumCard';
 import MoodeCommand from '../services/MoodeCommand';
 import Library from '../services/Library';
-import { cardMaxWidth, cardMargin, gridPadding } from '../config/AppConstants';
+import { cardMaxWidth, cardMargin } from '../config/AppConstants';
 import Loading from './Loading';
 
 const totalMargin = cardMargin * 2;
@@ -13,13 +13,13 @@ const styles = () => ({
   viewPort: {
     flex: 1,
     overflowY: 'scroll',
-    padding: `0 40px`
+    padding: '0 40px'
   },
   measureRef: {
     height: '100%'
   },
   gridPadding: {
-    padding: `20px 0`
+    padding: '20px 0'
   },
   cardCluster: {
     '&[data-col-count="2"] > div': {
@@ -91,8 +91,8 @@ class AlbumGrid extends Component {
     const { topRows, rootMargin, rowHeight, virtualRows } = this.state.virtual;
     const topHeight = topRows * rowHeight;
     const scrollHeight = event.target.scrollTop - rootMargin;
-    const newTopRows =
-      Math.trunc((scrollHeight - topHeight) / rowHeight) + topRows;
+    const scrollDiff = scrollHeight - topHeight;
+    const newTopRows = Math.trunc(scrollDiff / rowHeight) + topRows;
     const boundedTopRows = Math.min(Math.max(0, newTopRows), virtualRows);
 
     if (boundedTopRows !== topRows) {

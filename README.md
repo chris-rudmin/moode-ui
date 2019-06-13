@@ -14,9 +14,15 @@ You can also start the application locally for development purposes using
 
     npm run start
 
-## Connecting to a MoOde instance
+## Connecting to a MoOde instance remotely
 
-In the file `/var/www/command/moode.php` add the line
+Connect to your moode server, and in the files 
+
+    /var/www/command/moode.php
+    /var/www/engine-mpd.php
+    /var/www/engine-cmd.php
+
+add the line
 
     header("Access-Control-Allow-Origin: *");
 
