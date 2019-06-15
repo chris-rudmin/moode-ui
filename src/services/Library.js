@@ -45,7 +45,7 @@ class Library {
           tracks: albumTracks.map(track => track.file),
           artist: albumArtist || artist,
           last_modified: Library.getLastModified(albumTracks),
-          thumb_url: `${MoodeDomain}/imagesw/thmcache/${hash}.jpg`
+          thumb_url: `${MoodeDomain}/imagesw/thmcache/${hash}.jpg`,
         };
       })
       .sort((a, b) => b.last_modified - a.last_modified);

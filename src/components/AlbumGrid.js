@@ -13,49 +13,49 @@ const styles = () => ({
   viewPort: {
     flex: 1,
     overflowY: 'scroll',
-    padding: '0 40px'
+    padding: '0 40px',
   },
   measureRef: {
-    height: '100%'
+    height: '100%',
   },
   gridPadding: {
-    padding: '20px 0'
+    padding: '20px 0',
   },
   cardCluster: {
     '&[data-col-count="2"] > div': {
-      width: `calc((100%/2) - ${totalMargin}px)`
+      width: `calc((100%/2) - ${totalMargin}px)`,
     },
     '&[data-col-count="3"] > div': {
-      width: `calc((100%/3) - ${totalMargin}px)`
+      width: `calc((100%/3) - ${totalMargin}px)`,
     },
     '&[data-col-count="4"] > div': {
-      width: `calc((100%/4) - ${totalMargin}px)`
+      width: `calc((100%/4) - ${totalMargin}px)`,
     },
     '&[data-col-count="5"] > div': {
-      width: `calc((100%/5) - ${totalMargin}px)`
+      width: `calc((100%/5) - ${totalMargin}px)`,
     },
     '&[data-col-count="6"] > div': {
-      width: `calc((100%/6) - ${totalMargin}px)`
+      width: `calc((100%/6) - ${totalMargin}px)`,
     },
     '&[data-col-count="7"] > div': {
-      width: `calc((100%/7) - ${totalMargin}px)`
+      width: `calc((100%/7) - ${totalMargin}px)`,
     },
     '&[data-col-count="8"] > div': {
-      width: `calc((100%/8) - ${totalMargin}px)`
+      width: `calc((100%/8) - ${totalMargin}px)`,
     },
     '&[data-col-count="9"] > div': {
-      width: `calc((100%/9) - ${totalMargin}px)`
+      width: `calc((100%/9) - ${totalMargin}px)`,
     },
     '&[data-col-count="10"] > div': {
-      width: `calc((100%/10) - ${totalMargin}px)`
+      width: `calc((100%/10) - ${totalMargin}px)`,
     },
     '&[data-col-count="11"] > div': {
-      width: `calc((100%/11) - ${totalMargin}px)`
+      width: `calc((100%/11) - ${totalMargin}px)`,
     },
     '&[data-col-count="12"] > div': {
-      width: `calc((100%/12) - ${totalMargin}px)`
-    }
-  }
+      width: `calc((100%/12) - ${totalMargin}px)`,
+    },
+  },
 });
 
 class AlbumGrid extends Component {
@@ -70,8 +70,8 @@ class AlbumGrid extends Component {
         topRows: 0,
         virtualRows: 0,
         cardCount: 0,
-        rootMargin: 0
-      }
+        rootMargin: 0,
+      },
     };
   }
 
@@ -82,7 +82,7 @@ class AlbumGrid extends Component {
         allAlbumCards: Library.getAllAlbums(data).map(album => (
           <AlbumCard key={album.album_key} album={album} />
         )),
-        isLoading: false
+        isLoading: false,
       }));
     });
   }
@@ -100,8 +100,8 @@ class AlbumGrid extends Component {
         ...state,
         virtual: {
           ...state.virtual,
-          topRows: boundedTopRows
-        }
+          topRows: boundedTopRows,
+        },
       }));
     }
   }
@@ -125,8 +125,8 @@ class AlbumGrid extends Component {
           rowHeight,
           cardCount,
           virtualRows,
-          rootMargin
-        }
+          rootMargin,
+        },
       };
     });
   }
@@ -171,7 +171,7 @@ class AlbumGrid extends Component {
 }
 
 AlbumGrid.propTypes = {
-  classes: PropTypes.shape({}).isRequired
+  classes: PropTypes.shape({}).isRequired,
 };
 
 export default withStyles(styles)(AlbumGrid);

@@ -10,8 +10,8 @@ const styles = {
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    height: '100%'
-  }
+    height: '100%',
+  },
 };
 
 class Loading extends PureComponent {
@@ -29,7 +29,7 @@ class Loading extends PureComponent {
 }
 
 Loading.propTypes = {
-  classes: PropTypes.shape({}).isRequired
+  classes: PropTypes.shape({}).isRequired,
 };
 
 export default withStyles(styles)(Loading);

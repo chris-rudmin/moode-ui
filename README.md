@@ -12,10 +12,11 @@ You can build the application locally using the command
 
 You can also start the application locally for development purposes using
 
-    npm run start
+    npm start
 
 ## Connecting to a MoOde instance remotely
 
+Requires the server serve reqests outside of localhost
 Connect to your moode server, and in the files 
 
     /var/www/command/moode.php

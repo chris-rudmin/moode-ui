@@ -9,16 +9,16 @@ class MoodeCommand {
     tracks.forEach(file => formData.append('path[]', file));
     return axios.post(url, formData, {
       params: {
-        cmd: 'clrplayall'
-      }
+        cmd: 'clrplayall',
+      },
     });
   }
 
   static loadLib() {
     return axios.post(url, null, {
       params: {
-        cmd: 'loadlib'
-      }
+        cmd: 'loadlib',
+      },
     });
   }
 }
