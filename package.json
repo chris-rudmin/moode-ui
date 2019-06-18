@@ -27,13 +27,6 @@
     "url": "https://github.com/chris-rudmin/moode-ui/issues"
   },
   "homepage": "https://github.com/chris-rudmin/moode-ui",
-  "jest": {
-    "testRegex": ".*\\.test\\.js$",
-    "setupTestFrameworkScriptFile": "<rootDir>src/__tests__/setupEnzyme.js",
-    "snapshotSerializers": [
-      "enzyme-to-json/serializer"
-    ]
-  },
   "dependencies": {
     "@material-ui/core": "^4.1.0",
     "@material-ui/icons": "^4.1.0",
@@ -43,9 +36,7 @@
     "prop-types": "^15.7.2",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "react-measure": "^2.3.0",
-    "react-router-dom": "^5.0.1",
-    "styled-components": "^4.3.1"
+    "react-measure": "^2.3.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.4.4",
@@ -72,7 +63,6 @@
     "mocker-api": "^1.7.6",
     "prettier": "^1.18.2",
     "puppeteer": "^1.17.0",
-    "react-test-renderer": "^16.8.6",
     "rimraf": "^2.6.3",
     "webpack": "^4.33.0",
     "webpack-cli": "^3.3.4",
