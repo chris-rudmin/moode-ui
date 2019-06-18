@@ -1,9 +1,10 @@
 const HtmlWebPackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
 const path = require('path');
-const apiMocker = require('webpack-api-mocker');
+const apiMocker = require('mocker-api');
 
-process.env.START_APP_SERVER = process.env.START_APP_SERVER === 'true' ? 'true' : 'false';
+process.env.APP_SERVER = process.env.APP_SERVER || 'http://localhost:8080';
+console.log(process.env.APP_SERVER);
 
 module.exports = {
   entry: {
@@ -52,10 +53,11 @@ module.exports = {
       filename: 'index.html',
     }),
     new webpack.DefinePlugin({
-      'process.env.START_APP_SERVER': JSON.stringify(process.env.START_APP_SERVER),
+      'process.env.APP_SERVER': JSON.stringify(process.env.APP_SERVER),
     }),
   ],
   devServer: {
+    compress: true,
     before(app) {
       apiMocker(app, path.resolve('src/__mock_server__/index.js'));
     },

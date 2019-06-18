@@ -28,7 +28,7 @@ export const AlbumShape = PropTypes.shape({
   tracks: PropTypes.arrayOf(PropTypes.string),
 });
 
-export const MoodeDomain = 'http://dev-moode.local';
+export const MoodeDomain = process.env.APP_SERVER;
 
 export const cardMargin = 8;
 export const cardMaxWidth = 210 + cardMargin * 2;

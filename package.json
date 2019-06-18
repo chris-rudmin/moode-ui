@@ -10,12 +10,11 @@
     "test:watch": "jest --watch",
     "clean": "rimraf dist",
     "build": "webpack --mode production",
-    "start": "cross-env START_APP_SERVER=true webpack-dev-server -d --open",
+    "start": "webpack-dev-server -d --open",
     "lint:fix": "npm run lint -- --fix",
     "lint": "cross-env eslint 'src/**/*.{js,jsx}'",
     "test:e2e": "jest -c jest-e2e.config.js --detectOpenHandles",
-    "prepare": "npm run build",
-    "version:pr": "cross-env PR_NUMBER=${PR_NUMBER:=} npm version \"${npm_package_version}-${PR_NUMBER}\""
+    "prepare": "npm run build"
   },
   "repository": {
     "type": "git",
@@ -70,12 +69,12 @@
     "html-webpack-plugin": "^3.2.0",
     "jest": "^24.8.0",
     "jest-puppeteer": "^4.2.0",
+    "mocker-api": "^1.7.6",
     "prettier": "^1.18.2",
     "puppeteer": "^1.17.0",
     "react-test-renderer": "^16.8.6",
     "rimraf": "^2.6.3",
     "webpack": "^4.33.0",
-    "webpack-api-mocker": "^1.7.6",
     "webpack-cli": "^3.3.4",
     "webpack-dev-middleware": "^3.7.0",
     "webpack-dev-server": "^3.7.1"

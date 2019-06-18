@@ -1,5 +1,3 @@
-console.log("process.env.START_APP_SERVER", process.env.START_APP_SERVER)
-
 module.exports = {
     launch: {
         args: ['--disable-background-networking', 
@@ -48,11 +46,9 @@ module.exports = {
     }
 }
 
-if (process.env.START_APP_SERVER === "true") {
-    module.exports.server = {
-        command: 'webpack-dev-server --mode development --port 8080',
-        port: 8080,
-        launchTimeout: 60000,
-        debug: true
-    };
-}
+module.exports.server = {
+    command: 'webpack-dev-server -d --port 8080',
+    port: 8080,
+    launchTimeout: 60000,
+    debug: true
+};

@@ -1,5 +1,3 @@
-process.env.START_APP_SERVER = "true";
-
 module.exports = {
   preset: "jest-puppeteer",
   globals: {

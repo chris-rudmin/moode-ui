@@ -16,7 +16,7 @@ You can also start the application locally for development purposes using
 
 ## Connecting to a MoOde instance remotely
 
-Requires the server serve reqests outside of localhost
+Required to serve reqests outside of localhost
 Connect to your moode server, and in the files 
 
     /var/www/command/moode.php
@@ -26,6 +26,10 @@ Connect to your moode server, and in the files
 add the line
 
     header("Access-Control-Allow-Origin: *");
+
+Set the app server env variable
+
+    set APP_SERVER=http://moode.local
 
 ## Tests
 
