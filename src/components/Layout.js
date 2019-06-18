@@ -17,7 +17,7 @@ class Layout extends PureComponent {
   render() {
     const { classes } = this.props;
     return (
-      <div className={classes.layout} data-testid='app'>
+      <div className={classes.layout} data-testid="app">
         <Header />
         <AlbumGrid />
         <Player />

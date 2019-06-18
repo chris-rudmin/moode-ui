@@ -1,7 +1,6 @@
 const lib = require('./loadlib.json');
 
 const proxy = {
-
   'POST /command/moode.php': (req, res) => {
     const { cmd } = req.query;
     switch (cmd) {
@@ -16,7 +15,7 @@ const proxy = {
     }
   },
 
-  'GET /engine-mpd.php': (req, res) => {
+  'GET /engine-mpd.php': () => {
     // hold conenction open
   },
 };
