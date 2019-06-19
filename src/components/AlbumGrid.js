@@ -60,9 +60,8 @@ class AlbumGrid extends Component {
 
   onScroll(event) {
     const { topRows, rootMargin, rowHeight, virtualRows } = this.state;
-    const topHeight = topRows * rowHeight;
     const scrollHeight = event.target.scrollTop - rootMargin;
-    const scrollDiff = scrollHeight - topHeight;
+    const scrollDiff = scrollHeight - topRows * rowHeight;
     const newTopRows = Math.trunc(scrollDiff / rowHeight) + topRows;
     const boundedTopRows = Math.min(Math.max(0, newTopRows), virtualRows);
 
