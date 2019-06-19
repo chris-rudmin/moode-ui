@@ -64,14 +64,12 @@ class AlbumGrid extends Component {
     this.state = {
       allAlbumCards: [<div />],
       isLoading: true,
-      virtual: {
-        colCount: 0,
-        rowHeight: 0,
-        topRows: 0,
-        virtualRows: 0,
-        cardCount: 0,
-        rootMargin: 0,
-      },
+      colCount: 0,
+      rowHeight: 0,
+      topRows: 0,
+      virtualRows: 0,
+      cardCount: 0,
+      rootMargin: 0,
     };
   }
 
@@ -88,7 +86,7 @@ class AlbumGrid extends Component {
   }
 
   onScroll(event) {
-    const { topRows, rootMargin, rowHeight, virtualRows } = this.state.virtual;
+    const { topRows, rootMargin, rowHeight, virtualRows } = this.state;
     const topHeight = topRows * rowHeight;
     const scrollHeight = event.target.scrollTop - rootMargin;
     const scrollDiff = scrollHeight - topHeight;
@@ -98,10 +96,7 @@ class AlbumGrid extends Component {
     if (boundedTopRows !== topRows) {
       this.setState(state => ({
         ...state,
-        virtual: {
-          ...state.virtual,
-          topRows: boundedTopRows,
-        },
+        topRows: boundedTopRows,
       }));
     }
   }
@@ -119,25 +114,29 @@ class AlbumGrid extends Component {
 
       return {
         ...state,
-        virtual: {
-          ...state.virtual,
-          colCount,
-          rowHeight,
-          cardCount,
-          virtualRows,
-          rootMargin,
-        },
+        colCount,
+        rowHeight,
+        cardCount,
+        virtualRows,
+        rootMargin,
       };
     });
   }
 
   render() {
     const { classes } = this.props;
-    const { virtual, allAlbumCards, isLoading } = this.state;
-    const cardOffset = virtual.topRows * virtual.colCount;
-    const topHeight = virtual.topRows * virtual.rowHeight;
-    const bottomHeight =
-      (virtual.virtualRows - virtual.topRows) * virtual.rowHeight;
+    const {
+      virtualRows,
+      topRows,
+      colCount,
+      rowHeight,
+      allAlbumCards,
+      isLoading,
+      cardCount,
+    } = this.state;
+    const cardOffset = topRows * colCount;
+    const topHeight = topRows * rowHeight;
+    const bottomHeight = (virtualRows - topRows) * rowHeight;
 
     return isLoading ? (
       <Loading />
@@ -151,14 +150,8 @@ class AlbumGrid extends Component {
             <div ref={measureRef} className={classes.measureRef}>
               <div className={classes.gridPadding}>
                 <div style={{ height: topHeight }} />
-                <div
-                  className={classes.cardCluster}
-                  data-col-count={virtual.colCount}
-                >
-                  {allAlbumCards.slice(
-                    cardOffset,
-                    cardOffset + virtual.cardCount
-                  )}
+                <div className={classes.cardCluster} data-col-count={colCount}>
+                  {allAlbumCards.slice(cardOffset, cardOffset + cardCount)}
                 </div>
                 <div style={{ height: bottomHeight }} />
               </div>
