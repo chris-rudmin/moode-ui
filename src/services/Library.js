@@ -4,8 +4,8 @@ import { MoodeDomain } from '../config/AppConstants';
 class Library {
   static addAlbumKey(track) {
     const modifiedTrack = track;
-    modifiedTrack.key = `${modifiedTrack.album}@${modifiedTrack.album_artist ||
-      modifiedTrack.artist}`.toLowerCase();
+    const artist = track.album_artist || track.artist;
+    modifiedTrack.key = `${track.album}@${artist}`.toLowerCase();
     return modifiedTrack;
   }
 

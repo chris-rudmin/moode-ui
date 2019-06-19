@@ -21,41 +21,14 @@ const styles = () => ({
   gridPadding: {
     padding: '20px 0',
   },
-  cardCluster: {
-    '&[data-col-count="2"] > div': {
-      width: `calc((100%/2) - ${totalMargin}px)`,
-    },
-    '&[data-col-count="3"] > div': {
-      width: `calc((100%/3) - ${totalMargin}px)`,
-    },
-    '&[data-col-count="4"] > div': {
-      width: `calc((100%/4) - ${totalMargin}px)`,
-    },
-    '&[data-col-count="5"] > div': {
-      width: `calc((100%/5) - ${totalMargin}px)`,
-    },
-    '&[data-col-count="6"] > div': {
-      width: `calc((100%/6) - ${totalMargin}px)`,
-    },
-    '&[data-col-count="7"] > div': {
-      width: `calc((100%/7) - ${totalMargin}px)`,
-    },
-    '&[data-col-count="8"] > div': {
-      width: `calc((100%/8) - ${totalMargin}px)`,
-    },
-    '&[data-col-count="9"] > div': {
-      width: `calc((100%/9) - ${totalMargin}px)`,
-    },
-    '&[data-col-count="10"] > div': {
-      width: `calc((100%/10) - ${totalMargin}px)`,
-    },
-    '&[data-col-count="11"] > div': {
-      width: `calc((100%/11) - ${totalMargin}px)`,
-    },
-    '&[data-col-count="12"] > div': {
-      width: `calc((100%/12) - ${totalMargin}px)`,
-    },
-  },
+  cardCluster: Array(12)
+    .fill(0)
+    .reduce((acc, val, i) => {
+      acc[`&[data-col-count="${i + 2}"] > div`] = {
+        width: `calc((100%/${i + 2}) - ${totalMargin}px)`,
+      };
+      return acc;
+    }, {}),
 });
 
 class AlbumGrid extends Component {
@@ -124,7 +97,6 @@ class AlbumGrid extends Component {
   }
 
   render() {
-    const { classes } = this.props;
     const {
       virtualRows,
       topRows,
@@ -134,6 +106,7 @@ class AlbumGrid extends Component {
       isLoading,
       cardCount,
     } = this.state;
+    const { classes } = this.props;
     const cardOffset = topRows * colCount;
     const topHeight = topRows * rowHeight;
     const bottomHeight = (virtualRows - topRows) * rowHeight;

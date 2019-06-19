@@ -4,7 +4,6 @@ const path = require('path');
 const apiMocker = require('mocker-api');
 
 process.env.APP_SERVER = process.env.APP_SERVER || 'http://localhost:8080';
-console.log(process.env.APP_SERVER);
 
 module.exports = {
   entry: {
