@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import Measure from 'react-measure';
-import AlbumCard from './AlbumCard';
+import AlbumCard, { cardStyles } from './AlbumCard';
 import MoodeCommand from '../services/MoodeCommand';
 import Library from '../services/Library';
 import { cardMaxWidth, cardMargin } from '../config/AppConstants';
@@ -10,13 +10,10 @@ import Loading from './Loading';
 const totalMargin = cardMargin * 2;
 const cardWidth = Array(12)
   .fill(0)
-  .map(
-    (val, i) => `
-  &[data-col-count="${i + 2}"] .albumCard {
-    width: calc((100%/${i + 2}) - ${totalMargin}px);
-  }
-`
-  )
+  .map((val, i) => `
+    &[data-col-count="${i + 2}"] .albumCard {
+      width: calc((100%/${i + 2}) - ${totalMargin}px);
+    }`)
   .join('');
 
 const ViewPort = styled.div`
@@ -35,52 +32,7 @@ const GridPadding = styled.div`
 
 const CardCluster = styled.div`
   ${cardWidth}
-
-  .albumCard {
-    display: inline-block;
-    margin: ${cardMargin}px;
-    overflow: hidden;
-    box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2),
-      0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 2px 1px -1px rgba(0, 0, 0, 0.12);
-    border-radius: 4px;
-    color: #fff;
-    transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-    background-color: #424242;
-  }
-
-  .albumThumb {
-    width: 100%;
-    padding-bottom: 100%;
-    background-image: ;
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
-  }
-
-  .cardContent {
-    padding: 16px;
-  }
-
-  .cardContent > p {
-    margin: 0;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
-    font-weight: 400;
-  }
-
-  .albumTitle {
-    font-size: 1rem;
-    line-height: 1.5;
-    letter-spacing: 0.00938em;
-  }
-
-  .albumArtist {
-    font-size: 0.75rem;
-    line-height: 1.66;
-    letter-spacing: 0.03333em;
-  }
+  ${cardStyles}
 `;
 
 class AlbumGrid extends Component {
