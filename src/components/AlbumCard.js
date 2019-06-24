@@ -12,7 +12,7 @@ const AlbumCard = ({ album }) => {
     >
       <div
         style={{
-          backgroundImage: `url(${album.thumb_url}),url(${defaultAlbum}`,
+          backgroundImage: `url(${album.thumb_url}),url(${defaultAlbum})`,
         }}
         title={album.title}
         className="albumThumb"
