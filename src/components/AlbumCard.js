@@ -8,24 +8,22 @@ const AlbumCard = ({ album }) => {
   return (
     <div
       onClick={() => MoodeCommand.clearPlayAll(album.tracks)}
-      className={'albumCard'}
+      className="albumCard"
     >
       <div
-        style={{backgroundImage: `url(${album.thumb_url}),url(${defaultAlbum}`}}
+        style={{
+          backgroundImage: `url(${album.thumb_url}),url(${defaultAlbum}`,
+        }}
         title={album.title}
-        className={'albumThumb'}
+        className="albumThumb"
       />
-      <div className={'cardContent'}>
-        <p className={'albumTitle'}>
-          {album.title}
-        </p>
-        <p className={'albumArtist'}>
-          {album.artist}
-        </p>
+      <div className="cardContent">
+        <p className="albumTitle">{album.title}</p>
+        <p className="albumArtist">{album.artist}</p>
       </div>
     </div>
   );
-}
+};
 
 AlbumCard.propTypes = {
   album: AlbumShape.isRequired,
