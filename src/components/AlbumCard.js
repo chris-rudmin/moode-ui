@@ -1,61 +1,34 @@
-import React, { PureComponent } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
-import Card from '@material-ui/core/Card';
-import CardActionArea from '@material-ui/core/CardActionArea';
-import CardContent from '@material-ui/core/CardContent';
-import CardMedia from '@material-ui/core/CardMedia';
-import Typography from '@material-ui/core/Typography';
-import { AlbumShape, cardMargin, MoodeDomain } from '../config/AppConstants';
+import { AlbumShape, MoodeDomain } from '../config/AppConstants';
 import MoodeCommand from '../services/MoodeCommand';
 
-const styles = {
-  media: {
-    width: '100%',
-    paddingBottom: '100%',
-  },
-  mediaFallback: {
-    backgroundImage: `url(${MoodeDomain}/images/default-cover-v6.svg)`,
-  },
-  card: {
-    display: 'inline-block',
-    margin: cardMargin,
-  },
-};
-
-class AlbumCard extends PureComponent {
-  render() {
-    const { classes, album } = this.props;
-    return (
-      <Card
-        onClick={() => MoodeCommand.clearPlayAll(album.tracks)}
-        className={classes.card}
-      >
-        <CardActionArea>
-          <div className={classes.mediaFallback}>
-            <CardMedia
-              className={classes.media}
-              image={album.thumb_url}
-              title={album.title}
-            />
-          </div>
-          <CardContent>
-            <Typography variant="body1" noWrap>
-              {album.title}
-            </Typography>
-            <Typography variant="caption" display="block" noWrap>
-              {album.artist}
-            </Typography>
-          </CardContent>
-        </CardActionArea>
-      </Card>
-    );
-  }
+const defaultAlbum = `${MoodeDomain}/images/default-cover-v6.svg`;
+const AlbumCard = ({ album }) => {
+  return (
+    <div
+      onClick={() => MoodeCommand.clearPlayAll(album.tracks)}
+      className={'albumCard'}
+    >
+      <div
+        style={{backgroundImage: `url(${album.thumb_url}),url(${defaultAlbum}`}}
+        title={album.title}
+        className={'albumThumb'}
+      />
+      <div className={'cardContent'}>
+        <p className={'albumTitle'}>
+          {album.title}
+        </p>
+        <p className={'albumArtist'}>
+          {album.artist}
+        </p>
+      </div>
+    </div>
+  );
 }
 
 AlbumCard.propTypes = {
   album: AlbumShape.isRequired,
-  classes: PropTypes.shape({}).isRequired,
 };
 
-export default withStyles(styles)(AlbumCard);
+export default AlbumCard;

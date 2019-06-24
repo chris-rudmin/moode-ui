@@ -53,7 +53,7 @@ class Player extends PureComponent {
   render() {
     const { classes } = this.props;
     const { playState } = this.state;
-    // playState sends paths with and without beginning slashes
+    // API returns paths with and without beginning slashes
     const coverUrl = playState.coverurl.startsWith('/')
       ? playState.coverurl
       : `/${playState.coverurl}`;

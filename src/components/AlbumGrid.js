@@ -1,35 +1,81 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
+import styled from 'styled-components';
 import Measure from 'react-measure';
 import AlbumCard from './AlbumCard';
 import MoodeCommand from '../services/MoodeCommand';
 import Library from '../services/Library';
-import { cardMaxWidth, cardMargin } from '../config/AppConstants';
+import { cardMaxWidth, cardMargin, MoodeDomain } from '../config/AppConstants';
 import Loading from './Loading';
 
 const totalMargin = cardMargin * 2;
-const styles = () => ({
-  viewPort: {
-    flex: 1,
-    overflowY: 'scroll',
-    padding: '0 40px',
-  },
-  measureRef: {
-    height: '100%',
-  },
-  gridPadding: {
-    padding: '20px 0',
-  },
-  cardCluster: Array(12)
-    .fill(0)
-    .reduce((acc, val, i) => {
-      acc[`&[data-col-count="${i + 2}"] > div`] = {
-        width: `calc((100%/${i + 2}) - ${totalMargin}px)`,
-      };
-      return acc;
-    }, {}),
-});
+const cardWidth = Array(12).fill(0).map((val, i) => `
+  &[data-col-count="${i + 2}"] .albumCard {
+    width: calc((100%/${i + 2}) - ${totalMargin}px);
+  }
+`).join('');
+
+const ViewPort = styled.div`
+  flex: 1;
+  overflow-y: scroll;
+  padding: 0 40px;
+`;
+
+const MeasureRef = styled.div`
+  height: 100%;
+`;
+
+const GridPadding = styled.div`
+  padding: 20px 0;
+`;
+
+const CardCluster = styled.div`
+  ${cardWidth}
+
+  .albumCard {
+    display: inline-block;
+    margin: ${cardMargin}px;
+    overflow: hidden;
+    box-shadow: 0px 1px 3px 0px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 2px 1px -1px rgba(0,0,0,0.12);
+    border-radius: 4px;
+    color: #fff;
+    transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    background-color: #424242;
+  }
+
+  .albumThumb {
+    width: 100%;
+    padding-bottom: 100%;
+    background-image:;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+
+  .cardContent {
+    padding: 16px;
+  }
+
+  .cardContent > p { 
+    margin: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    font-weight: 400;
+  }
+
+  .albumTitle {
+    font-size: 1rem;
+    line-height: 1.5;
+    letter-spacing: 0.00938em;
+  }
+
+  .albumArtist {
+    font-size: 0.75rem;
+    line-height: 1.66;
+    letter-spacing: 0.03333em;
+  }
+`;
 
 class AlbumGrid extends Component {
   constructor(props) {
@@ -110,34 +156,28 @@ class AlbumGrid extends Component {
     const cardOffset = topRows * colCount;
     const topHeight = topRows * rowHeight;
     const bottomHeight = (virtualRows - topRows) * rowHeight;
+    const virtualCards = allAlbumCards.slice(cardOffset, cardOffset + cardCount);
 
     return isLoading ? (
       <Loading />
     ) : (
-      <div
-        onScroll={event => this.onScroll(event)}
-        className={classes.viewPort}
-      >
+      <ViewPort onScroll={event => this.onScroll(event)}>
         <Measure bounds onResize={({ bounds }) => this.onResize(bounds)}>
           {({ measureRef }) => (
-            <div ref={measureRef} className={classes.measureRef}>
-              <div className={classes.gridPadding}>
+            <MeasureRef ref={measureRef}>
+              <GridPadding>
                 <div style={{ height: topHeight }} />
-                <div className={classes.cardCluster} data-col-count={colCount}>
-                  {allAlbumCards.slice(cardOffset, cardOffset + cardCount)}
-                </div>
+                <CardCluster data-col-count={colCount}>
+                  {virtualCards}
+                </CardCluster>
                 <div style={{ height: bottomHeight }} />
-              </div>
-            </div>
+              </GridPadding>
+            </MeasureRef>
           )}
         </Measure>
-      </div>
+      </ViewPort>
     );
   }
 }
 
-AlbumGrid.propTypes = {
-  classes: PropTypes.shape({}).isRequired,
-};
-
-export default withStyles(styles)(AlbumGrid);
+export default AlbumGrid;
