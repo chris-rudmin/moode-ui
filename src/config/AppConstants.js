@@ -18,6 +18,7 @@ import { createMuiTheme } from '@material-ui/core/styles';
 // });
 
 export const AlbumShape = PropTypes.shape({
+  album_key: PropTypes.string,
   title: PropTypes.string,
   artist: PropTypes.string,
   composer: PropTypes.string,

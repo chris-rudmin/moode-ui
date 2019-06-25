@@ -1,35 +1,40 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
+import styled from 'styled-components';
 import Measure from 'react-measure';
-import AlbumCard from './AlbumCard';
+import AlbumCard, { cardStyles } from './AlbumCard';
 import MoodeCommand from '../services/MoodeCommand';
 import Library from '../services/Library';
 import { cardMaxWidth, cardMargin } from '../config/AppConstants';
 import Loading from './Loading';
 
 const totalMargin = cardMargin * 2;
-const styles = () => ({
-  viewPort: {
-    flex: 1,
-    overflowY: 'scroll',
-    padding: '0 40px',
-  },
-  measureRef: {
-    height: '100%',
-  },
-  gridPadding: {
-    padding: '20px 0',
-  },
-  cardCluster: Array(12)
-    .fill(0)
-    .reduce((acc, val, i) => {
-      acc[`&[data-col-count="${i + 2}"] > div`] = {
-        width: `calc((100%/${i + 2}) - ${totalMargin}px)`,
-      };
-      return acc;
-    }, {}),
-});
+const cardWidth = Array(12)
+  .fill(0)
+  .map((val, i) => `
+    &[data-col-count="${i + 2}"] .albumCard {
+      width: calc((100%/${i + 2}) - ${totalMargin}px);
+    }
+  `)
+  .join('');
+
+const ViewPort = styled.div`
+  flex: 1;
+  overflow-y: scroll;
+  padding: 0 40px;
+`;
+
+const MeasureRef = styled.div`
+  height: 100%;
+`;
+
+const GridPadding = styled.div`
+  padding: 20px 0;
+`;
+
+const CardCluster = styled.div`
+  ${cardWidth}
+  ${cardStyles}
+`;
 
 class AlbumGrid extends Component {
   constructor(props) {
@@ -105,38 +110,35 @@ class AlbumGrid extends Component {
       isLoading,
       cardCount,
     } = this.state;
-    const { classes } = this.props;
+
     const cardOffset = topRows * colCount;
     const topHeight = topRows * rowHeight;
     const bottomHeight = (virtualRows - topRows) * rowHeight;
+    const virtualCards = allAlbumCards.slice(
+      cardOffset,
+      cardOffset + cardCount
+    );
 
     return isLoading ? (
       <Loading />
     ) : (
-      <div
-        onScroll={event => this.onScroll(event)}
-        className={classes.viewPort}
-      >
+      <ViewPort onScroll={event => this.onScroll(event)}>
         <Measure bounds onResize={({ bounds }) => this.onResize(bounds)}>
           {({ measureRef }) => (
-            <div ref={measureRef} className={classes.measureRef}>
-              <div className={classes.gridPadding}>
+            <MeasureRef ref={measureRef}>
+              <GridPadding>
                 <div style={{ height: topHeight }} />
-                <div className={classes.cardCluster} data-col-count={colCount}>
-                  {allAlbumCards.slice(cardOffset, cardOffset + cardCount)}
-                </div>
+                <CardCluster data-col-count={colCount}>
+                  {virtualCards}
+                </CardCluster>
                 <div style={{ height: bottomHeight }} />
-              </div>
-            </div>
+              </GridPadding>
+            </MeasureRef>
           )}
         </Measure>
-      </div>
+      </ViewPort>
     );
   }
 }
 
-AlbumGrid.propTypes = {
-  classes: PropTypes.shape({}).isRequired,
-};
-
-export default withStyles(styles)(AlbumGrid);
+export default AlbumGrid;
