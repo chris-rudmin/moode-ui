@@ -13,7 +13,8 @@ const cardWidth = Array(12)
   .map((val, i) => `
     &[data-col-count="${i + 2}"] .albumCard {
       width: calc((100%/${i + 2}) - ${totalMargin}px);
-    }`)
+    }
+  `)
   .join('');
 
 const ViewPort = styled.div`
