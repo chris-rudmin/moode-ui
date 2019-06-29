@@ -10,11 +10,13 @@ import Loading from './Loading';
 const totalMargin = cardMargin * 2;
 const cardWidth = Array(12)
   .fill(0)
-  .map((val, i) => `
+  .map(
+    (val, i) => `
     &[data-col-count="${i + 2}"] .albumCard {
       width: calc((100%/${i + 2}) - ${totalMargin}px);
     }
-  `)
+  `
+  )
   .join('');
 
 const ViewPort = styled.div`
@@ -63,9 +65,9 @@ class AlbumGrid extends Component {
     });
   }
 
-  onScroll(event) {
+  onScroll(target) {
     const { topRows, rootMargin, rowHeight, virtualRows } = this.state;
-    const scrollHeight = event.target.scrollTop - rootMargin;
+    const scrollHeight = target.scrollTop - rootMargin;
     const scrollDiff = scrollHeight - topRows * rowHeight;
     const newTopRows = Math.trunc(scrollDiff / rowHeight) + topRows;
     const boundedTopRows = Math.min(Math.max(0, newTopRows), virtualRows);
@@ -82,8 +84,8 @@ class AlbumGrid extends Component {
     this.setState(state => {
       const colCount = Math.ceil(width / cardMaxWidth);
       const totalRows = Math.ceil(state.allAlbumCards.length / colCount);
-      const rowHeight = width / colCount + 80; // Card media height + card footer height + card border height
-      const actualRows = 7;
+      const rowHeight = width / colCount + 75; // Card media height + card footer height + cardMargin
+      const actualRows = Math.ceil(height / rowHeight) + 4;
       const actualHeight = actualRows * rowHeight;
       const rootMargin = (actualHeight - height) / 2;
       const cardCount = actualRows * colCount;
@@ -122,7 +124,7 @@ class AlbumGrid extends Component {
     return isLoading ? (
       <Loading />
     ) : (
-      <ViewPort onScroll={event => this.onScroll(event)}>
+      <ViewPort onScroll={event => this.onScroll(event.target)}>
         <Measure bounds onResize={({ bounds }) => this.onResize(bounds)}>
           {({ measureRef }) => (
             <MeasureRef ref={measureRef}>
