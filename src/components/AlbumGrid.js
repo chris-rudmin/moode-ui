@@ -84,7 +84,7 @@ class AlbumGrid extends Component {
     this.setState(state => {
       const colCount = Math.ceil(width / cardMaxWidth);
       const totalRows = Math.ceil(state.allAlbumCards.length / colCount);
-      const rowHeight = width / colCount + 75; // Card media height + card footer height + cardMargin
+      const rowHeight = width / colCount + 75; // Card media height + card footer height
       const actualRows = Math.ceil(height / rowHeight) + 4;
       const actualHeight = actualRows * rowHeight;
       const rootMargin = (actualHeight - height) / 2;
