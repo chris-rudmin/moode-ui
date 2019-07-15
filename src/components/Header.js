@@ -89,10 +89,7 @@ class Header extends PureComponent {
 
           <IconButton
             aria-label="Random Album"
-            aria-controls="Random Album"
-            aria-haspopup="true"
             onClick={() => {}}
-            color="inherit"
             className={classes.randomAlbum}
           >
             <AlbumIcon />

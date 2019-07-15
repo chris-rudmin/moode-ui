@@ -20,6 +20,7 @@ Required to serve reqests outside of localhost
 Connect to your moode server, and in the files 
 
     /var/www/command/moode.php
+    /var/www/command/index.php
     /var/www/engine-mpd.php
     /var/www/engine-cmd.php
 

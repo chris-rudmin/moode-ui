@@ -43,6 +43,7 @@ class Player extends PureComponent {
     super(props);
     this.mpdEngine = new MpdEngine();
     this.state = {
+      playHistory:[],
       playState: {
         artist: '',
         album: '',
@@ -53,10 +54,31 @@ class Player extends PureComponent {
 
   componentDidMount() {
     this.mpdEngine.getPlayState(playState => {
-      this.setState(state => ({
+      this.setState(state => {
+        const playHistory = [...state.playHistory];
+        const songIndex = parseInt(playState.song, 10);
+        const lastSong = playHistory[playHistory.length - 1];
+        if (playState.state === 'play' && lastSong !== songIndex) {
+          playHistory.push(songIndex);
+        }
+        return {
+          ...state,
+          playHistory,
+          playState,
+        };
+      });
+    });
+  }
+
+  prevTrack() {
+    this.setState(state => {
+      const playHistory = [...state.playHistory];
+      const prevTrack = playHistory.pop() || parseInt(state.playState.song, 10) - 1;
+      Command.play(Math.max(0, prevTrack));
+      return {
         ...state,
-        playState,
-      }));
+        playHistory,
+      };
     });
   }
 
@@ -98,31 +120,22 @@ class Player extends PureComponent {
 
         <div className={classes.controls}>
           <IconButton
-            aria-label="Skip Previous"
-            aria-controls="Skip Previous"
-            aria-haspopup="true"
-            onClick={() => {}}
-            color="inherit"
+            aria-label="Previous Track"
+            onClick={() => this.prevTrack()}
           >
             <SkipPrevious fontSize="small" />
           </IconButton>
 
           <IconButton
             aria-label="Play"
-            aria-controls="Play"
-            aria-haspopup="true"
-            onClick={() => Command.play()}
-            color="inherit"
+            onClick={() => Command.resume()}
           >
             <PlayArrow fontSize="large" />
           </IconButton>
 
           <IconButton
-            aria-label="Skip Next"
-            aria-controls="Skip Next"
-            aria-haspopup="true"
-            onClick={() => {}}
-            color="inherit"
+            aria-label="Next Track"
+            onClick={() => Command.next()}
           >
             <SkipNext fontSize="small" />
           </IconButton>
