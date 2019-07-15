@@ -4,7 +4,10 @@ import { withStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import Typography from '@material-ui/core/Typography';
 import MpdEngine from '../services/MpdEngine';
+import Command from '../services/Command';
 import { MoodeDomain } from '../config/AppConstants';
+import { PlayArrow, Pause, SkipNext, SkipPrevious } from '@material-ui/icons';
+import IconButton from '@material-ui/core/IconButton';
 
 const styles = theme => ({
   player: {
@@ -25,6 +28,13 @@ const styles = theme => ({
     display: 'flex',
     marginLeft: 10,
     alignItems: 'center',
+    flex: 1,
+  },
+  controls: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
   },
 });
 
@@ -67,22 +77,61 @@ class Player extends PureComponent {
         }}
         anchor="bottom"
       >
-        <img
-          className={classes.image}
-          src={`${MoodeDomain}${coverUrl}`}
-          alt={playState.album}
-        />
+        <div className={classes.controls}>
+          <img
+            className={classes.image}
+            src={`${MoodeDomain}${coverUrl}`}
+            alt={playState.album}
+          />
 
-        <div className={classes.artistInfo}>
-          <div>
-            <Typography variant="body1" noWrap>
-              {playState.title}
-            </Typography>
-            <Typography variant="caption" noWrap>
-              {`${playState.artist} - ${playState.album}`}
-            </Typography>
+          <div className={classes.artistInfo}>
+            <div>
+              <Typography variant="body1" noWrap>
+                {playState.title}
+              </Typography>
+              <Typography variant="caption" noWrap>
+                {`${playState.artist} - ${playState.album}`}
+              </Typography>
+            </div>
           </div>
         </div>
+
+        <div className={classes.controls}>
+          <IconButton
+            aria-label="Skip Previous"
+            aria-controls="Skip Previous"
+            aria-haspopup="true"
+            onClick={() => {}}
+            color="inherit"
+          >
+            <SkipPrevious fontSize="small" />
+          </IconButton>
+
+          <IconButton
+            aria-label="Play"
+            aria-controls="Play"
+            aria-haspopup="true"
+            onClick={() => Command.play()}
+            color="inherit"
+          >
+            <PlayArrow fontSize="large" />
+          </IconButton>
+
+          <IconButton
+            aria-label="Skip Next"
+            aria-controls="Skip Next"
+            aria-haspopup="true"
+            onClick={() => {}}
+            color="inherit"
+          >
+            <SkipNext fontSize="small" />
+          </IconButton>
+        </div>
+
+        <div className={classes.controls}>
+          Test
+        </div>
+
       </Drawer>
     );
   }
