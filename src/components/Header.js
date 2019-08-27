@@ -9,7 +9,6 @@ import AlbumIcon from '@material-ui/icons/Album';
 import InputBase from '@material-ui/core/InputBase';
 import IconButton from '@material-ui/core/IconButton';
 
-
 const styles = theme => {
   return {
     appBar: {
@@ -58,17 +57,19 @@ const styles = theme => {
       },
     },
   };
-}
+};
 
 class Header extends PureComponent {
   render() {
     const { classes } = this.props;
     return (
-      <AppBar position='static' color='default' className={classes.appBar}>
+      <AppBar position="static" color="default" className={classes.appBar}>
         <Toolbar className={classes.toolbar}>
-          <Typography variant="h6" color="inherit" >
+          <Typography variant="h6" color="inherit">
             Albums
           </Typography>
+
+          <div className={classes.grow} />
 
           <div className={classes.search}>
             <div className={classes.searchIcon}>
@@ -88,10 +89,7 @@ class Header extends PureComponent {
 
           <IconButton
             aria-label="Random Album"
-            aria-controls='Randome Album'
-            aria-haspopup="true"
             onClick={() => {}}
-            color="inherit"
             className={classes.randomAlbum}
           >
             <AlbumIcon />
@@ -103,7 +101,7 @@ class Header extends PureComponent {
 }
 
 Header.propTypes = {
-  classes: PropTypes.shape({}).isRequired
+  classes: PropTypes.shape({}).isRequired,
 };
 
 export default withStyles(styles)(Header);

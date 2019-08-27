@@ -1,62 +1,42 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
+import styled from 'styled-components';
 import Measure from 'react-measure';
-import AlbumCard from './AlbumCard';
+import AlbumCard, { cardStyles } from './AlbumCard';
 import MoodeCommand from '../services/MoodeCommand';
 import Library from '../services/Library';
-import { cardMaxWidth, cardMargin, gridPadding } from '../config/AppConstants';
+import { cardMaxWidth, cardMargin } from '../config/AppConstants';
 import Loading from './Loading';
 
 const totalMargin = cardMargin * 2;
-const styles = () => ({
-  viewPort: {
-    flex: 1,
-    overflowY: 'scroll',
-    padding: `0 ${gridPadding}px`
-  },
-  measureRef: {
-    height: '100%'
-  },
-  gridPadding: {
-    padding: `${gridPadding}px 0`
-  },
-  cardCluster: {
-    '&[data-col-count="2"] > div': {
-      width: `calc((100%/2) - ${totalMargin}px)`
-    },
-    '&[data-col-count="3"] > div': {
-      width: `calc((100%/3) - ${totalMargin}px)`
-    },
-    '&[data-col-count="4"] > div': {
-      width: `calc((100%/4) - ${totalMargin}px)`
-    },
-    '&[data-col-count="5"] > div': {
-      width: `calc((100%/5) - ${totalMargin}px)`
-    },
-    '&[data-col-count="6"] > div': {
-      width: `calc((100%/6) - ${totalMargin}px)`
-    },
-    '&[data-col-count="7"] > div': {
-      width: `calc((100%/7) - ${totalMargin}px)`
-    },
-    '&[data-col-count="8"] > div': {
-      width: `calc((100%/8) - ${totalMargin}px)`
-    },
-    '&[data-col-count="9"] > div': {
-      width: `calc((100%/9) - ${totalMargin}px)`
-    },
-    '&[data-col-count="10"] > div': {
-      width: `calc((100%/10) - ${totalMargin}px)`
-    },
-    '&[data-col-count="11"] > div': {
-      width: `calc((100%/11) - ${totalMargin}px)`
-    },
-    '&[data-col-count="12"] > div': {
-      width: `calc((100%/12) - ${totalMargin}px)`
+const cardWidth = Array(12)
+  .fill(0)
+  .map(
+    (val, i) => `
+    &[data-col-count="${i + 2}"] .albumCard {
+      width: calc((100%/${i + 2}) - ${totalMargin}px);
     }
-  }
-});
+  `
+  )
+  .join('');
+
+const ViewPort = styled.div`
+  flex: 1;
+  overflow-y: scroll;
+  padding: 0 40px;
+`;
+
+const MeasureRef = styled.div`
+  height: 100%;
+`;
+
+const GridPadding = styled.div`
+  padding: 20px 0;
+`;
+
+const CardCluster = styled.div`
+  ${cardWidth}
+  ${cardStyles}
+`;
 
 class AlbumGrid extends Component {
   constructor(props) {
@@ -64,14 +44,12 @@ class AlbumGrid extends Component {
     this.state = {
       allAlbumCards: [<div />],
       isLoading: true,
-      virtual: {
-        colCount: 0,
-        rowHeight: 0,
-        topRows: 0,
-        virtualRows: 0,
-        cardCount: 0,
-        rootMargin: 0
-      }
+      colCount: 0,
+      rowHeight: 0,
+      topRows: 0,
+      virtualRows: 0,
+      cardCount: 0,
+      rootMargin: 0,
     };
   }
 
@@ -82,26 +60,22 @@ class AlbumGrid extends Component {
         allAlbumCards: Library.getAllAlbums(data).map(album => (
           <AlbumCard key={album.album_key} album={album} />
         )),
-        isLoading: false
+        isLoading: false,
       }));
     });
   }
 
-  onScroll(event) {
-    const { topRows, rootMargin, rowHeight, virtualRows } = this.state.virtual;
-    const topHeight = topRows * rowHeight;
-    const scrollHeight = event.target.scrollTop - rootMargin;
-    const newTopRows =
-      Math.trunc((scrollHeight - topHeight) / rowHeight) + topRows;
+  onScroll(target) {
+    const { topRows, rootMargin, rowHeight, virtualRows } = this.state;
+    const scrollHeight = target.scrollTop - rootMargin;
+    const scrollDiff = scrollHeight - topRows * rowHeight;
+    const newTopRows = Math.trunc(scrollDiff / rowHeight) + topRows;
     const boundedTopRows = Math.min(Math.max(0, newTopRows), virtualRows);
 
     if (boundedTopRows !== topRows) {
       this.setState(state => ({
         ...state,
-        virtual: {
-          ...state.virtual,
-          topRows: boundedTopRows
-        }
+        topRows: boundedTopRows,
       }));
     }
   }
@@ -110,8 +84,8 @@ class AlbumGrid extends Component {
     this.setState(state => {
       const colCount = Math.ceil(width / cardMaxWidth);
       const totalRows = Math.ceil(state.allAlbumCards.length / colCount);
-      const rowHeight = width / colCount + 80; // Card media height + card footer height + card border height
-      const actualRows = 7;
+      const rowHeight = width / colCount + 75; // Card media height + card footer height
+      const actualRows = Math.ceil(height / rowHeight) + 4;
       const actualHeight = actualRows * rowHeight;
       const rootMargin = (actualHeight - height) / 2;
       const cardCount = actualRows * colCount;
@@ -119,59 +93,54 @@ class AlbumGrid extends Component {
 
       return {
         ...state,
-        virtual: {
-          ...state.virtual,
-          colCount,
-          rowHeight,
-          cardCount,
-          virtualRows,
-          rootMargin
-        }
+        colCount,
+        rowHeight,
+        cardCount,
+        virtualRows,
+        rootMargin,
       };
     });
   }
 
   render() {
-    const { classes } = this.props;
-    const { virtual, allAlbumCards, isLoading } = this.state;
-    const cardOffset = virtual.topRows * virtual.colCount;
-    const topHeight = virtual.topRows * virtual.rowHeight;
-    const bottomHeight =
-      (virtual.virtualRows - virtual.topRows) * virtual.rowHeight;
+    const {
+      virtualRows,
+      topRows,
+      colCount,
+      rowHeight,
+      allAlbumCards,
+      isLoading,
+      cardCount,
+    } = this.state;
+
+    const cardOffset = topRows * colCount;
+    const topHeight = topRows * rowHeight;
+    const bottomHeight = (virtualRows - topRows) * rowHeight;
+    const virtualCards = allAlbumCards.slice(
+      cardOffset,
+      cardOffset + cardCount
+    );
 
     return isLoading ? (
       <Loading />
     ) : (
-      <div
-        onScroll={event => this.onScroll(event)}
-        className={classes.viewPort}
-      >
+      <ViewPort onScroll={event => this.onScroll(event.target)}>
         <Measure bounds onResize={({ bounds }) => this.onResize(bounds)}>
           {({ measureRef }) => (
-            <div ref={measureRef} className={classes.measureRef}>
-              <div className={classes.gridPadding}>
+            <MeasureRef ref={measureRef}>
+              <GridPadding>
                 <div style={{ height: topHeight }} />
-                <div
-                  className={classes.cardCluster}
-                  data-col-count={virtual.colCount}
-                >
-                  {allAlbumCards.slice(
-                    cardOffset,
-                    cardOffset + virtual.cardCount
-                  )}
-                </div>
+                <CardCluster data-col-count={colCount}>
+                  {virtualCards}
+                </CardCluster>
                 <div style={{ height: bottomHeight }} />
-              </div>
-            </div>
+              </GridPadding>
+            </MeasureRef>
           )}
         </Measure>
-      </div>
+      </ViewPort>
     );
   }
 }
 
-AlbumGrid.propTypes = {
-  classes: PropTypes.shape({}).isRequired
-};
-
-export default withStyles(styles)(AlbumGrid);
+export default AlbumGrid;

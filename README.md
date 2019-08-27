@@ -12,13 +12,25 @@ You can build the application locally using the command
 
 You can also start the application locally for development purposes using
 
-    npm run start
+    npm start
 
-## Connecting to a MoOde instance
+## Connecting to a MoOde instance remotely
 
-In the file `/var/www/command/moode.php` add the line
+Required to serve reqests outside of localhost
+Connect to your moode server, and in the files 
+
+    /var/www/command/moode.php
+    /var/www/command/index.php
+    /var/www/engine-mpd.php
+    /var/www/engine-cmd.php
+
+add the line
 
     header("Access-Control-Allow-Origin: *");
+
+Set the app server env variable
+
+    set APP_SERVER=http://moode.local
 
 ## Tests
 
